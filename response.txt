@@ -1,0 +1,21 @@
+HTTP/1.1 200 OK
+Date: Mon, 26 Aug 2024 22:47:49 GMT
+Content-Type: application/json; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+Vary: Accept-Encoding
+X-DNS-Prefetch-Control: off
+X-Frame-Options: SAMEORIGIN
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Download-Options: noopen
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Access-Control-Allow-Origin: *
+Cache-Control: public, must-revalidate, max-age=60
+ETag: W/"4ae87-OHeZ7j8cBFSrhuGLZUs3EK/1MRw"
+CF-Cache-Status: HIT
+Age: 5
+Server: cloudflare
+CF-RAY: 8b975da35cdb10ff-ORD
+alt-svc: h3=":443"; ma=86400
+
