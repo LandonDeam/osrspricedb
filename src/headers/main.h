@@ -1,11 +1,13 @@
+// Copyright Landon Deam 2024
+
+#ifndef SRC_HEADERS_MAIN_H_
+#define SRC_HEADERS_MAIN_H_
+
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <memory>
-#include <mutex>
-#include <thread>
-#include <chrono>
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPSClientSession.h"
@@ -19,3 +21,5 @@
 #include "Poco/URI.h"
 #include "Poco/StreamCopier.h"
 #include "Poco/Exception.h"
+
+#endif  // SRC_HEADERS_MAIN_H_
