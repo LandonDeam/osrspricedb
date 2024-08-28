@@ -71,5 +71,6 @@
       "ios": "cpp",
       "locale": "cpp",
       "fstream": "cpp"
-    }
+    },
+    "cpplint.root": "${workspaceFolder}/src",
 }

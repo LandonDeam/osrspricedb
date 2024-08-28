@@ -1,7 +1,7 @@
 // Copyright Landon Deam 2024
 
-#ifndef SRC_HEADERS_MAIN_H_
-#define SRC_HEADERS_MAIN_H_
+#ifndef HEADERS_MAIN_H_
+#define HEADERS_MAIN_H_
 
 #include <iostream>
 #include <fstream>
@@ -22,4 +22,4 @@
 #include "Poco/StreamCopier.h"
 #include "Poco/Exception.h"
 
-#endif  // SRC_HEADERS_MAIN_H_
+#endif  // HEADERS_MAIN_H_
