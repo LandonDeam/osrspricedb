@@ -1,0 +1,14 @@
+{
+    "profiles": [
+        {
+            "name": "osrspricedb",
+            "conanFile": "${workspaceFolder}/conanfile.py",
+            "profile": "default",
+            "installArg": "--build missing",
+            "buildArg": "",
+            "createUser": "landon",
+            "createChannel": "development",
+            "createArg": ""
+        }
+    ]
+}

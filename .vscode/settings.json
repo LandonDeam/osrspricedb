@@ -73,4 +73,11 @@
       "fstream": "cpp"
     },
     "cpplint.root": "${workspaceFolder}/src",
+    "C_Cpp.default.cppStandard": "gnu++20",
+    "C_Cpp.default.configurationProvider": "gnu",
+    "C_Cpp.default.cStandard": "gnu17",
+    "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+    "cpplint.excludes": [
+      "{workspaceFolder}/build/**"
+    ],
 }
