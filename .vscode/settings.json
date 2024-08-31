@@ -78,6 +78,21 @@
     "C_Cpp.default.cStandard": "gnu17",
     "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
     "cpplint.excludes": [
-      "{workspaceFolder}/build/**"
+      "{workspaceFolder}/build/**",
+      "{workspaceFolder}/build/CMakeFiles/**"
     ],
+    "C_Cpp.files.exclude": {
+        "build/**": true,
+    },
+    "files.watcherExclude": {
+        "build/**": true,
+    },
+    "search.exclude": {
+        "build/**": true,
+    },
+    "files.exclude": {
+        "build/**": false,
+    },
+    "docwriter.style": "Doxygen",
+    "cpplint.cpplintPath": "cpplint",
 }

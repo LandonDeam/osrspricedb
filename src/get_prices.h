@@ -1,7 +1,8 @@
 // Copyright Landon Deam 2024
 
-#ifndef HEADERS_MAIN_H_
-#define HEADERS_MAIN_H_
+#pragma once
+#ifndef GET_PRICES_H_
+#define GET_PRICES_H_
 
 #include <iostream>
 #include <fstream>
@@ -22,4 +23,6 @@
 #include "Poco/StreamCopier.h"
 #include "Poco/Exception.h"
 
-#endif  // HEADERS_MAIN_H_
+const Poco::URI uri("https://prices.runescape.wiki");
+
+#endif  // GET_PRICES_H_
