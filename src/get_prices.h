@@ -26,11 +26,10 @@
 #include "Poco/StreamCopier.h"
 #include "Poco/Exception.h"
 
-#include "item.h"
+#include "item_map.h"
 
 class price_getter {
  public:
-  std::map<int, item> prices;
   explicit price_getter(Poco::URI uri);
   explicit price_getter(const std::string str);
   void get_prices();

@@ -104,7 +104,7 @@
         "build/**": true,
     },
     "files.exclude": {
-        "build/**": false,
+        "build/**": true,
     },
     "docwriter.style": "Doxygen",
     "cpplint.cpplintPath": "cpplint",
