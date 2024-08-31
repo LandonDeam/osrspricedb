@@ -3,5 +3,7 @@
 #include "main.h"
 
 int main() {
-  return get_prices();
+  price_getter p("https://prices.runescape.wiki");
+  p.get_prices();
+  return 0;
 }

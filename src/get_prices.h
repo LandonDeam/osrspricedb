@@ -9,6 +9,9 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <thread>
+#include <map>
+#include <tuple>
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPSClientSession.h"
@@ -23,8 +26,16 @@
 #include "Poco/StreamCopier.h"
 #include "Poco/Exception.h"
 
-const Poco::URI uri("https://prices.runescape.wiki");
-
-int get_prices();
+class price_getter {
+ public:
+  std::map<int, std::tuple<int, int>> prices;
+  explicit price_getter(Poco::URI uri);
+  explicit price_getter(const std::string str);
+  void get_prices();
+ private:
+  Poco::Net::HTTPSClientSession client;
+  Poco::Net::HTTPRequest* generate_request();
+  void new_connection(Poco::URI uri);
+};
 
 #endif  // GET_PRICES_H_
