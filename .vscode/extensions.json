@@ -2,6 +2,7 @@
   "recommendations": [
     "mine.cpplint",
     "ms-vscode.cpptools",
-    "disroop.conan"
+    "ms-vscode.cmake-tools",
+    "twxs.cmake"
   ]
 }

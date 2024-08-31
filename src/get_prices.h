@@ -25,4 +25,6 @@
 
 const Poco::URI uri("https://prices.runescape.wiki");
 
+int get_prices();
+
 #endif  // GET_PRICES_H_
