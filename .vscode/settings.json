@@ -79,7 +79,11 @@
         "numeric": "cpp",
         "iomanip": "cpp",
         "print": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "forward_list": "cpp",
+        "semaphore": "cpp",
+        "__node_handle": "cpp",
+        "__tree": "cpp"
     },
     "cpplint.root": "${workspaceFolder}/src",
     "C_Cpp.default.cppStandard": "gnu++20",

@@ -11,8 +11,7 @@ price_getter::price_getter(Poco::URI uri) {
 /// @brief Creates a connectio to a URI represented with a string
 /// @param str String representing a URI
 price_getter::price_getter(const std::string str)
-  : price_getter(Poco::URI(str)) {
-}
+  : price_getter(Poco::URI(str)) {}
 
 /// @brief Gets all of the prices
 void price_getter::get_prices() {

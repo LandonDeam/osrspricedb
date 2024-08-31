@@ -1,0 +1,41 @@
+// Copyright Landon Deam 2024
+
+#include "item.h"
+
+item::item(int ID, int high_price, int low_price,
+  uint32_t time_high, uint32_t time_low) {
+    this->ID = ID;
+    update_price_data(high_price, low_price, time_high, time_low);
+}
+
+// examine,id,members,lowalch,limit,value,highalch,icon,name
+
+item::item(std::string examine, int ID, bool members, int lowalch,
+  int limit, int value, int highalch, std::string icon, std::string name) {
+    this->ID = ID;
+    update_info(examine, members, lowalch, limit, value, highalch, icon, name);
+}
+
+void item::update_info(std::string examine, bool members, int lowalch,
+  int limit, int value, int highalch, std::string icon, std::string name) {
+    this->examine = examine;
+    this->members = members;
+    this->lowalch = lowalch;
+    this->limit = limit;
+    this->value = value;
+    this->highalch = highalch;
+    this->icon = icon;
+    this->name = name;
+}
+
+void item::update_price_data(int high_price, int low_price,
+  uint32_t time_high, uint32_t time_low) {
+    this->low.update(low_price, time_high);
+    this->high.update(high_price, time_high);
+    this->has_prices = true;
+}
+
+int item::getID() {
+  return this->ID;
+}
+
