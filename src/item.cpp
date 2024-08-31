@@ -8,8 +8,6 @@ item::item(int ID, int high_price, int low_price,
     update_price_data(high_price, low_price, time_high, time_low);
 }
 
-// examine,id,members,lowalch,limit,value,highalch,icon,name
-
 item::item(std::string examine, int ID, bool members, int lowalch,
   int limit, int value, int highalch, std::string icon, std::string name) {
     this->ID = ID;

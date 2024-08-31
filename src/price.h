@@ -11,6 +11,8 @@ class price {
   price();
   price(int pri, uint32_t timestamp);
   void update(int new_price, uint32_t timestamp);
+  int get_price();
+  uint32_t get_timestamp();
  private:
   int pri;
   uint32_t timestamp;

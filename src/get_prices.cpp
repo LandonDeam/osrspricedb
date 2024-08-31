@@ -34,7 +34,7 @@ void price_getter::get_prices() {
     }
     responseFile.close();
   } catch (Poco::Exception& e) {
-    std::cout << e.displayText() << std::endl;
+    std::cerr << e.displayText() << std::endl;
   }
 }
 
