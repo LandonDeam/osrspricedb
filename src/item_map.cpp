@@ -3,7 +3,11 @@
 #include "item_map.h"
 
 void item_map::update(std::ostream& data, const std::string& type) {
-
+  if (!type.compare("price")) {
+    update_price(data);
+  } else if (!type.compare("info")) {
+    update_info(data);
+  }
 }
 
 item item_map::get(int ID) {
