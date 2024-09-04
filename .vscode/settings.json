@@ -87,7 +87,7 @@
     },
     "cpplint.root": "${workspaceFolder}/src",
     "C_Cpp.default.cppStandard": "",
-    "C_Cpp.default.configurationProvider": "",
+    "C_Cpp.default.configurationProvider": "${default}",
     "C_Cpp.default.cStandard": "",
     "C_Cpp.default.intelliSenseMode": "",
     "cpplint.excludes": [
