@@ -86,10 +86,10 @@
         "__tree": "cpp"
     },
     "cpplint.root": "${workspaceFolder}/src",
-    "C_Cpp.default.cppStandard": "gnu++20",
-    "C_Cpp.default.configurationProvider": "gnu",
-    "C_Cpp.default.cStandard": "gnu17",
-    "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+    "C_Cpp.default.cppStandard": "",
+    "C_Cpp.default.configurationProvider": "",
+    "C_Cpp.default.cStandard": "",
+    "C_Cpp.default.intelliSenseMode": "",
     "cpplint.excludes": [
       "{workspaceFolder}/build/**",
       "{workspaceFolder}/build/CMakeFiles/**"
