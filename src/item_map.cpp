@@ -2,6 +2,8 @@
 
 #include "item_map.h"
 
+std::map<int, item> item_map::items;
+
 void item_map::update(std::ostream& data, const std::string& type) {
   if (!type.compare("price")) {
     update_price(data);
