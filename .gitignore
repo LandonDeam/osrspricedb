@@ -2,3 +2,5 @@ build
 CMakeUserPresets.json
 request.txt
 response.txt
+.cache
+compile_commands.json
