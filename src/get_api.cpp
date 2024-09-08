@@ -13,7 +13,11 @@ getter::getter(Poco::URI uri) {
 getter::getter(const std::string str)
   : getter(Poco::URI(str)) {}
 
-/// @brief Gets all of the prices
+/// @brief Gets and parses data from the given endpoint, saving the response in
+/// the debug file
+/// @param ep Endpoint to connect to
+/// @param debug File to save debug info to
+/// @param type The type of data to receive and input int the item map
 void getter::get(const std::string& ep,
                  const std::string& debug,
                  const std::string& type) {
