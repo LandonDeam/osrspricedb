@@ -9,6 +9,7 @@
 
 class item {
  public:
+  item(int ID);
   item(int ID,
     int high_price, int low_price,
     uint32_t time_high, uint32_t time_low);

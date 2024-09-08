@@ -84,7 +84,8 @@
         "semaphore": "cpp",
         "__node_handle": "cpp",
         "__tree": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "typeindex": "cpp"
     },
     "cpplint.root": "${workspaceFolder}/src",
     "C_Cpp.default.cppStandard": "",

@@ -23,7 +23,11 @@ void item_map::update_price(std::ostringstream& data) {
   std::sregex_iterator it(dat.begin(), dat.end(), srch), it_end;
   for (; it != it_end; ++it) {
     const std::smatch& match = *it;
-    item matched = items.at(std::atoi(match.str(1).c_str()));
+    int ID = std::atoi(match.str(1).c_str());
+    if (items.find(ID) == items.end()) {
+      items.emplace(ID, ID);
+    }
+    item matched = items.at(ID);
     matched.update_price_data(
       std::atoi(match.str(2).c_str()),
       std::atoi(match.str(4).c_str()),
