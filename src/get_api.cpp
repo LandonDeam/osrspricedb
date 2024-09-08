@@ -14,22 +14,24 @@ getter::getter(const std::string str)
   : getter(Poco::URI(str)) {}
 
 /// @brief Gets all of the prices
-void getter::get_prices() {
+void getter::get(const std::string& ep,
+                 const std::string& debug,
+                 const std::string& type) {
   try {
     Poco::Net::HTTPResponse response;
-    Poco::Net::HTTPRequest* request = generate_request("/api/v1/osrs/latest/");
+    Poco::Net::HTTPRequest* request = generate_request(ep);
 
     // Sending Request
     std::ostream& sentRequest = client.sendRequest(*request);
 
     // Getting Response and saving response
     std::istream& responseStream = client.receiveResponse(response);
-    std::ofstream responseFile("debug/prices.json");
+    std::ofstream responseFile(debug);
     std::ostringstream responseStr;
     if (response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK) {
       Poco::StreamCopier::copyStream(responseStream, responseStr);
       responseFile << responseStr.str();
-      item_map::update(responseStr, "price");
+      item_map::update(responseStr, type);
     } else {
       std::cerr << "Error: " << response.getStatus()
                 << " " << response.getReason() << std::endl;
@@ -41,32 +43,14 @@ void getter::get_prices() {
   }
 }
 
+/// @brief Gets all of the prices
+void getter::get_prices() {
+  this->get("/api/v1/osrs/latest/", "debug/prices.json", "price");
+}
+
 /// @brief Gets all item info
 void getter::get_info() {
-  try {
-    Poco::Net::HTTPResponse response;
-    Poco::Net::HTTPRequest* request = generate_request("/api/v1/osrs/mapping/");
-
-    // Sending Request
-    std::ostream& sentRequest = client.sendRequest(*request);
-
-    // Getting Response and saving response
-    std::istream& responseStream = client.receiveResponse(response);
-    std::ofstream responseFile("debug/mapping.json");
-    std::ostringstream responseStr;
-    if (response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK) {
-      Poco::StreamCopier::copyStream(responseStream, responseStr);
-      responseFile << responseStr.str();
-      item_map::update(responseStr, "info");
-    } else {
-      std::cerr << "Error: " << response.getStatus()
-                << " " << response.getReason() << std::endl;
-      response.write(responseFile);
-    }
-    responseFile.close();
-  } catch (Poco::Exception& e) {
-    std::cerr << e.displayText() << std::endl;
-  }
+  this->get("/api/v1/osrs/mapping/", "debug/mapping.json", "info");
 }
 
 /// @brief Generates and returns a pointer to an HTTP GET request
