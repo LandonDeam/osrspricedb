@@ -4,7 +4,7 @@
 #ifndef ITEM_MAP_H_
 #define ITEM_MAP_H_
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <iostream>
 #include <regex>
@@ -15,7 +15,7 @@ class item_map {
   static void update(std::ostringstream& data, const std::string& type);
   static item get(int ID);
  private:
-  static std::map<int, item> items;
+  static std::unordered_map<int, item> items;
   static void verifID(int ID);
   static void update_price(std::ostringstream& data);
   static void update_info(std::ostringstream& data);
