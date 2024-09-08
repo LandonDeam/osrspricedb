@@ -7,13 +7,13 @@ item::item(int ID) {
 }
 
 item::item(int ID, int high_price, int low_price,
-  uint32_t time_high, uint32_t time_low) : item(ID) {
-    update_price_data(high_price, low_price, time_high, time_low);
+ uint32_t time_high, uint32_t time_low) : item(ID) {
+  update_price_data(high_price, low_price, time_high, time_low);
 }
 
 item::item(std::string examine, int ID, bool members, int lowalch,
-    int limit, int value, int highalch, std::string icon, std::string name)
-    : item(ID) {
+ int limit, int value, int highalch, std::string icon, std::string name)
+: item(ID) {
   update_info(examine, members, lowalch, limit, value, highalch, icon, name);
 }
 
@@ -30,7 +30,7 @@ void item::update_info(std::string examine, bool members, int lowalch,
 }
 
 void item::update_price_data(int high_price, int low_price,
-  uint32_t time_high, uint32_t time_low) {
+ uint32_t time_high, uint32_t time_low) {
     this->low.update(low_price, time_high);
     this->high.update(high_price, time_high);
     this->has_prices = true;

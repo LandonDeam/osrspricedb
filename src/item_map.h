@@ -16,6 +16,7 @@ class item_map {
   static item get(int ID);
  private:
   static std::map<int, item> items;
+  static void verifID(int ID);
   static void update_price(std::ostringstream& data);
   static void update_info(std::ostringstream& data);
 };
