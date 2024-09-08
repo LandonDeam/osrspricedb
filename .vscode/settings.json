@@ -83,7 +83,8 @@
         "forward_list": "cpp",
         "semaphore": "cpp",
         "__node_handle": "cpp",
-        "__tree": "cpp"
+        "__tree": "cpp",
+        "regex": "cpp"
     },
     "cpplint.root": "${workspaceFolder}/src",
     "C_Cpp.default.cppStandard": "",

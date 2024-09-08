@@ -25,8 +25,11 @@ void price_getter::get_prices() {
     // Getting Response and saving response
     std::istream& responseStream = client.receiveResponse(response);
     std::ofstream responseFile("response.txt");
+    std::ostringstream responseStr;
     if (response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK) {
-      Poco::StreamCopier::copyStream(responseStream, responseFile);
+      Poco::StreamCopier::copyStream(responseStream, responseStr);
+      responseFile << responseStr.str();
+      item_map::update(responseStr, "price");
     } else {
       std::cerr << "Error: " << response.getStatus()
                 << " " << response.getReason() << std::endl;
