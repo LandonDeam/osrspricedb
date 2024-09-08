@@ -1,30 +1,30 @@
 // Copyright Landon Deam 2024
 
-#include "get_prices.h"
+#include "get_api.h"
 
 /// @brief Creates a connection with a URI
 /// @param uri URI to connect to
-price_getter::price_getter(Poco::URI uri) {
+getter::getter(Poco::URI uri) {
   new_connection(uri);
 }
 
 /// @brief Creates a connectio to a URI represented with a string
 /// @param str String representing a URI
-price_getter::price_getter(const std::string str)
-  : price_getter(Poco::URI(str)) {}
+getter::getter(const std::string str)
+  : getter(Poco::URI(str)) {}
 
 /// @brief Gets all of the prices
-void price_getter::get_prices() {
+void getter::get_prices() {
   try {
     Poco::Net::HTTPResponse response;
-    Poco::Net::HTTPRequest* request = generate_request();
+    Poco::Net::HTTPRequest* request = generate_request("/api/v1/osrs/latest/");
 
     // Sending Request
     std::ostream& sentRequest = client.sendRequest(*request);
 
     // Getting Response and saving response
     std::istream& responseStream = client.receiveResponse(response);
-    std::ofstream responseFile("response.txt");
+    std::ofstream responseFile("debug/prices.json");
     std::ostringstream responseStr;
     if (response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK) {
       Poco::StreamCopier::copyStream(responseStream, responseStr);
@@ -41,13 +41,42 @@ void price_getter::get_prices() {
   }
 }
 
+/// @brief Gets all item info
+void getter::get_info() {
+  try {
+    Poco::Net::HTTPResponse response;
+    Poco::Net::HTTPRequest* request = generate_request("/api/v1/osrs/mapping/");
+
+    // Sending Request
+    std::ostream& sentRequest = client.sendRequest(*request);
+
+    // Getting Response and saving response
+    std::istream& responseStream = client.receiveResponse(response);
+    std::ofstream responseFile("debug/mapping.json");
+    std::ostringstream responseStr;
+    if (response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK) {
+      Poco::StreamCopier::copyStream(responseStream, responseStr);
+      responseFile << responseStr.str();
+      item_map::update(responseStr, "info");
+    } else {
+      std::cerr << "Error: " << response.getStatus()
+                << " " << response.getReason() << std::endl;
+      response.write(responseFile);
+    }
+    responseFile.close();
+  } catch (Poco::Exception& e) {
+    std::cerr << e.displayText() << std::endl;
+  }
+}
+
 /// @brief Generates and returns a pointer to an HTTP GET request
+/// @param ep Which endpoint to point the request to
 /// @return Returns an HTTP GET request pointer
-Poco::Net::HTTPRequest* price_getter::generate_request() {
+Poco::Net::HTTPRequest* getter::generate_request(const std::string& ep) {
   Poco::Net::HTTPRequest *request =
       new Poco::Net::HTTPRequest(
         Poco::Net::HTTPRequest::HTTP_GET,
-        "/api/v1/osrs/latest/",
+        ep,
         Poco::Net::HTTPRequest::HTTP_1_1);
     request->add(
       "User-Agent",
@@ -57,7 +86,7 @@ Poco::Net::HTTPRequest* price_getter::generate_request() {
 
 /// @brief Creates a new HTTPS connection to the given URI
 /// @param uri URI to create a connection with
-void price_getter::new_connection(Poco::URI uri) {
+void getter::new_connection(Poco::URI uri) {
   Poco::Net::initializeSSL();
   // TODO(Landon Deam): Need to make an actual certificate handler :P
   Poco::SharedPtr<Poco::Net::InvalidCertificateHandler> ptrHandler =
