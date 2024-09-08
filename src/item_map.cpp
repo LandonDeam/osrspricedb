@@ -23,15 +23,13 @@ void item_map::update_price(std::ostringstream& data) {
   std::sregex_iterator it(dat.begin(), dat.end(), srch), it_end;
   for (; it != it_end; ++it) {
     const std::smatch& match = *it;
-    // std::cout << match.str() << std::endl;
-    std::cout << "Match found:\n"
-              << "Key: " << match.str(1) << "\n"
-              << "High: " << match.str(2) << "\n"
-              << "High Time: " << match.str(3) << "\n"
-              << "Low: " << match.str(4) << "\n"
-              << "Low Time: " << match.str(5) << std::endl;
+    item matched = items.at(std::atoi(match.str(1).c_str()));
+    matched.update_price_data(
+      std::atoi(match.str(2).c_str()),
+      std::atoi(match.str(4).c_str()),
+      std::atoi(match.str(3).c_str()),
+      std::atoi(match.str(5).c_str()));
   }
-  // items[std::atoi()];
 }
 
 void item_map::update_info(std::ostringstream& data) {
