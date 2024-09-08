@@ -44,10 +44,10 @@ void item_map::update_price(std::ostringstream& data) {
     verifID(ID);
     item matched = items.at(ID);
     matched.update_price_data(
-      std::atoi(match.str(2).c_str()),   // high
-      std::atoi(match.str(4).c_str()),   // low
-      std::atoi(match.str(3).c_str()),   // highTime
-      std::atoi(match.str(5).c_str()));  // lowTime
+      std::atoi(match.str(2).c_str()),    // high
+      std::atoi(match.str(4).c_str()),    // low
+      std::atoll(match.str(3).c_str()),   // highTime
+      std::atoll(match.str(5).c_str()));  // lowTime
   }
 }
 

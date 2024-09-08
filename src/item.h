@@ -12,12 +12,12 @@ class item {
   explicit item(int ID);
   item(int ID,
     int high_price, int low_price,
-    uint32_t time_high, uint32_t time_low);
+    uint64_t time_high, uint64_t time_low);
   item(std::string examine, int ID, bool members, int lowalch,
     int limit, int value, int highalch, std::string icon, std::string name);
   void update_price_data(
     int high_price, int low_price,
-    uint32_t time_high, uint32_t time_low);
+    uint64_t time_high, uint64_t time_low);
   void update_info(std::string examine, bool members, int lowalch,
     int limit, int value, int highalch, std::string icon, std::string name);
   int getID();
