@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <regex>
+#include <sstream>
 #include "item.h"
 
 class item_map {
