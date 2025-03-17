@@ -28,14 +28,18 @@
 
 #include "item_map.h"
 
-class price_getter {
+class getter {
  public:
-  explicit price_getter(Poco::URI uri);
-  explicit price_getter(const std::string str);
+  explicit getter(Poco::URI uri);
+  explicit getter(const std::string str);
   void get_prices();
+  void get_info();
  private:
+  void get(const std::string& ep,
+           const std::string& debug,
+           const std::string& type);
   Poco::Net::HTTPSClientSession client;
-  Poco::Net::HTTPRequest* generate_request();
+  Poco::Net::HTTPRequest* generate_request(const std::string& ep);
   void new_connection(Poco::URI uri);
 };
 
