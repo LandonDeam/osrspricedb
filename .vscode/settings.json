@@ -107,9 +107,9 @@
     "search.exclude": {
         "build/**": true,
     },
-    "files.exclude": {
-        "build/**": true,
-    },
+    // "files.exclude": {
+    //     "build/**": true,
+    // },
     "docwriter.style": "Doxygen",
     "cpplint.cpplintPath": "cpplint",
     "editor.tabSize": 2,
