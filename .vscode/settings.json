@@ -111,6 +111,5 @@
     //     "build/**": true,
     // },
     "docwriter.style": "Doxygen",
-    "cpplint.cpplintPath": "cpplint",
     "editor.tabSize": 2,
 }
