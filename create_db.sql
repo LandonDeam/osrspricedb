@@ -1,0 +1,10 @@
+CREATE SCHEMA osrs_market;
+USE osrs_market;
+
+CREATE TABLE `prices`(
+ID MEDIUMINT NOT NULL,
+price INT NOT NULL,
+`last_update` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+PRIMARY KEY (ID, last_update)
+);
