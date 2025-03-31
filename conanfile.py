@@ -24,7 +24,7 @@ class osrs_price_dbRecipe(ConanFile):
         cmake_layout(self)
 
     def requirements(self):
-        self.requires("sqlite3/3.45.0")
+        self.requires("mysql-connector-cpp/9.2.0")
         self.requires("poco/1.13.3")
 
     def generate(self):
