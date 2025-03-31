@@ -3,3 +3,5 @@ CMakeUserPresets.json
 .cache
 compile_commands.json
 debug/*
+CMakeFiles
+CMakeCache.txt
