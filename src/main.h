@@ -6,4 +6,7 @@
 
 #include "get_api.h"
 
+int main();
+void loadEnvVars(const std::string& filepath);
+
 #endif  // MAIN_H_
