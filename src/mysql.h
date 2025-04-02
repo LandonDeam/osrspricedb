@@ -18,7 +18,6 @@ class db_connection {
     username = std::getenv("MYSQL_USERNAME");
     password = std::getenv("MYSQL_PASSWORD");
   }
-
 };
 
-#endif // MYSQL_H_
+#endif  // MYSQL_H_
