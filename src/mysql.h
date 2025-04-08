@@ -18,7 +18,6 @@ class db_connection {
 
  public:
   static void init();
-  static std::string urlEncode(const std::string& input);
   static void close();
 };
 

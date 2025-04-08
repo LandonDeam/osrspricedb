@@ -11,7 +11,8 @@ add_executable(${PROJECT_NAME}
         src/item.cpp src/item.h
         src/price.cpp src/price.h
         src/mysql.cpp src/mysql.h
-        src/env.cpp src/env.h)
+        src/env.cpp src/env.h
+        src/utils.cpp src/utils.h)
 target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::XML Poco::JSON Poco::Util Poco::Net Poco::Crypto Poco::NetSSL mysql::concpp)
 
 install(TARGETS osrs_price_db DESTINATION "."
