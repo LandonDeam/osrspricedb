@@ -13,5 +13,6 @@ int main() {
   getter p("https://prices.runescape.wiki");
   p.get_prices();
   p.get_info();
+  db_connection::close();
   return 0;
 }
