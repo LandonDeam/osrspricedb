@@ -4,20 +4,20 @@
 #ifndef MYSQL_H_
 #define MYSQL_H_
 
-#include <iostream>
+#include <mysqlx/xdevapi.h>
 #include <string>
-#include <cstdlib>
+#include <memory>
 
 class db_connection {
  private:
-  static std::string username;
-  static std::string password;
+  inline static std::string username;
+  inline static std::string password;
+  inline static std::string port;
+  inline static std::string host;
+  inline static std::shared_ptr<mysqlx::Session> sess;
 
  public:
-  void init() {
-    username = std::getenv("MYSQL_USERNAME");
-    password = std::getenv("MYSQL_PASSWORD");
-  }
+  static void init();
 };
 
 #endif  // MYSQL_H_

@@ -5,3 +5,4 @@ compile_commands.json
 debug/*
 CMakeFiles
 CMakeCache.txt
+.env
