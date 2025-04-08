@@ -23,3 +23,16 @@ std::string utils::urlEncode(const std::string& input) {
   }
   return encoded.str();
 }
+
+void utils::makeFolderIfNotExists(const std::string& path) {
+  std::filesystem::path dir_path = path;
+  if (!std::filesystem::exists(dir_path)) {
+    if (std::filesystem::create_directory(dir_path)) {
+      std::cout << "Directory create successfully: " << dir_path << std::endl;
+    } else {
+      std::cerr << "Failed to create directory: " << dir_path << std::endl;
+    }
+  } else {
+    std::cout << "Directory already exists: " << dir_path << std::endl;
+  }
+}

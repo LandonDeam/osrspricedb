@@ -9,6 +9,7 @@
 class utils {
  public:
   static std::string urlEncode(const std::string& input);
+  static void makeFolderIfNotExists(const std::string& path);
 };
 
 #endif  // UTILS_H_
