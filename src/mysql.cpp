@@ -10,8 +10,8 @@
 void db_connection::init() {
   username = std::getenv("MYSQL_USERNAME");
   password = std::getenv("MYSQL_PASSWORD");
-  port = std::getenv("PORT");
-  host = std::getenv("HOST");
+  port = std::getenv("MYSQL_PORT");
+  host = std::getenv("MYSQL_HOST");
 
   try {
     std::string url("mysqlx://"+username+":"+password+"@"+port+":"+host);
