@@ -1,21 +1,37 @@
-CREATE SCHEMA osrs_market;
+CREATE SCHEMA IF NOT EXISTS osrs_market;
 USE osrs_market;
 
-CREATE TABLE `prices_series`(
+CREATE TABLE IF NOT EXISTS `prices_series`(
 `ID` MEDIUMINT NOT NULL,
 `updated` TIMESTAMP(0) NOT NULL,
 `fetched` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 FOREIGN KEY (`updated`) REFERENCES `price_update`(`updated`),
+FOREIGN KEY (`ID`) REFERENCES `item_map`(`ID`),
 
 PRIMARY KEY (`ID`, `fetched`)
 );
 
-CREATE TABLE `price_update`(
+CREATE TABLE IF NOT EXISTS `price_update`(
 `ID` MEDIUMINT NOT NULL,
 `price_buy` INT NOT NULL,
 `price_sell` INT NOT NULL,
 `updated` TIMESTAMP(0) NOT NULL,
 
+FOREIGN KEY (`ID`) REFERENCES `item_map`(`ID`),
+
 PRIMARY KEY (`ID`, `updated`)
+);
+
+CREATE TABLE IF NOT EXISTS `item_map`(
+`ID` MEDIUMINT NOT NULL,
+`name` VARCHAR(100) NOT NULL,
+`examine` TEXT NOT NULL,
+`members` BOOLEAN NOT NULL,
+`value` INT NOT NULL,
+`lowalch` INT,
+`highalch` INT,
+`limit` INT,
+
+PRIMARY KEY (`ID`)
 );
