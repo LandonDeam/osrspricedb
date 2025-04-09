@@ -87,7 +87,8 @@
         "__node_handle": "cpp",
         "__tree": "cpp",
         "regex": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "xstring": "cpp"
     },
     "cpplint.root": "${workspaceFolder}/src",
     "C_Cpp.default.cppStandard": "",
