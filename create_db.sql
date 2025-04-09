@@ -26,7 +26,7 @@ PRIMARY KEY (`ID`, `updated`)
 CREATE TABLE IF NOT EXISTS `item_map`(
 `ID` MEDIUMINT NOT NULL,
 `name` VARCHAR(100) NOT NULL,
-`examine` TEXT NOT NULL,
+`examine` VARCHAR(1000) NOT NULL,
 `members` BOOLEAN NOT NULL,
 `value` INT NOT NULL,
 `lowalch` INT,
