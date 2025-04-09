@@ -26,6 +26,7 @@ void db_connection::init() {
   } catch (std::exception e) {
     std::cerr << e.what() << std::endl;
   }
+  initialized = true;
 }
 
 void db_connection::close() {
@@ -36,9 +37,12 @@ void db_connection::close() {
   } catch (std::exception e) {
     std::cerr << e.what() << std::endl;
   }
+  initialized = false;
 }
 
 void db_connection::connect_db() {
+  if (!initialized) { init(); }  // Init connection if not already connected
+
   db =
     std::make_shared<mysqlx::Schema>(sess->getSchema("osrs_market"));
 

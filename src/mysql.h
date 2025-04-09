@@ -10,6 +10,8 @@
 
 class db_connection {
  private:
+  inline static bool initialized = false;
+
   inline static std::string username;
   inline static std::string password;
   inline static std::string port;
