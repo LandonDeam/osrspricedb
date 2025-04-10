@@ -1,5 +1,4 @@
 CREATE SCHEMA IF NOT EXISTS osrs_market;
-USE osrs_market;
 
 CREATE TABLE IF NOT EXISTS `prices_series`(
 `ID` MEDIUMINT NOT NULL,

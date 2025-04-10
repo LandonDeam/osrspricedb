@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS `prices_series`(
+`ID` MEDIUMINT NOT NULL,
+`updated` TIMESTAMP(0) NOT NULL,
+`fetched` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+FOREIGN KEY (`updated`) REFERENCES `price_update`(`updated`),
+FOREIGN KEY (`ID`) REFERENCES `item_map`(`ID`) ON UPDATE CASCADE,
+
+PRIMARY KEY (`ID`, `fetched`)
+);
