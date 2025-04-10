@@ -75,15 +75,19 @@ void db_connection::connect_tables() {
 
 void db_connection::build_schema() {
   // Build schema
+  sess->sql(utils::readTextFile("database/create_db.sql")).execute();
   // Create tables
   connect_tables();
 }
 
 void db_connection::build_price_series() {
+  sess->sql(utils::readTextFile("database/create_price_series.sql")).execute();
 }
 
 void db_connection::build_price_updated() {
+  sess->sql(utils::readTextFile("database/create_price_updated.sql")).execute();
 }
 
 void db_connection::build_item_map() {
+  sess->sql(utils::readTextFile("database/create_item_map.sql")).execute();
 }
