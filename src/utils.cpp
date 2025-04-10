@@ -3,6 +3,7 @@
 #include "utils.h"
 #include <iostream>
 #include <filesystem>
+#include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <cctype>
@@ -34,5 +35,34 @@ void utils::makeFolderIfNotExists(const std::string& path) {
     }
   } else {
     std::cout << "Directory already exists: " << dir_path << std::endl;
+  }
+}
+
+std::string utils::readTextFile(const std::string& path) {
+  std::filesystem::path file_path = path;
+
+  if (!std::filesystem::exists(file_path)) {
+    std::cerr << "File or path does not exist: " << path << std::endl;
+    return nullptr;
+  }
+
+  if (std::filesystem::is_directory(file_path)) {
+    std::cerr << "Pointed to directory, not file: " << path  << std::endl;
+    return nullptr;
+  }
+
+  try {
+    std::ifstream file(file_path, std::ios::in | std::ios::binary);
+
+    if (!file.is_open()) {
+      std::cerr << "Could not open file " << path << std::endl;
+      return nullptr;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+  } catch (std::exception e) {
+    std::cerr << e.what() << std::endl;
   }
 }
