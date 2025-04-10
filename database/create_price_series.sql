@@ -1,3 +1,5 @@
+USE osrs_market;
+
 CREATE TABLE IF NOT EXISTS `prices_series`(
 `ID` MEDIUMINT NOT NULL,
 `updated` TIMESTAMP(0) NOT NULL,

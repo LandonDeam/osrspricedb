@@ -1,3 +1,5 @@
+USE osrs_market;
+
 CREATE TABLE IF NOT EXISTS `price_update`(
 `ID` MEDIUMINT NOT NULL,
 `price_buy` INT NOT NULL,

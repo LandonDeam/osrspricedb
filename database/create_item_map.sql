@@ -1,3 +1,5 @@
+USE osrs_market;
+
 CREATE TABLE IF NOT EXISTS `item_map`(
 `ID` MEDIUMINT NOT NULL,
 `name` VARCHAR(100) NOT NULL,

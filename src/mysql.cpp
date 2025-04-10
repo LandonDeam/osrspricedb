@@ -63,7 +63,7 @@ void db_connection::connect_tables() {
   price_updated =
     std::make_shared<mysqlx::Table>(db->getTable("price_updated"));
   if (!price_updated->existsInDatabase()) {
-    build_price_updated();  // Create price_updated table if it doesn't exist
+    build_price_update();  // Create price_updated table if it doesn't exist
   }
 
   price_series =
@@ -81,13 +81,37 @@ void db_connection::build_schema() {
 }
 
 void db_connection::build_price_series() {
-  sess->sql(utils::readTextFile("database/create_price_series.sql")).execute();
+  mysqlx::SqlResult res = sess
+    ->sql(utils::readTextFile("database/create_price_series.sql"))
+    .execute();
+  if (res.getWarningsCount() > 0) {
+    std::cout << "Warning(s) while creating price series table:" << std::endl;
+    for (mysqlx::Warning warn : res.getWarnings()) {
+      std::cout << warn.getMessage() << std::endl;
+    }
+  }
 }
 
-void db_connection::build_price_updated() {
-  sess->sql(utils::readTextFile("database/create_price_updated.sql")).execute();
+void db_connection::build_price_update() {
+  mysqlx::SqlResult res = sess
+    ->sql(utils::readTextFile("database/create_price_updated.sql"))
+    .execute();
+  if (res.getWarningsCount() > 0) {
+    std::cout << "Warning(s) while creating price update table:" << std::endl;
+    for (mysqlx::Warning warn : res.getWarnings()) {
+      std::cout << warn.getMessage() << std::endl;
+    }
+  }
 }
 
 void db_connection::build_item_map() {
-  sess->sql(utils::readTextFile("database/create_item_map.sql")).execute();
+  mysqlx::SqlResult res = sess
+    ->sql(utils::readTextFile("database/create_item_map.sql"))
+    .execute();
+  if (res.getWarningsCount() > 0) {
+    std::cout << "Warning(s) while creating item map table:" << std::endl;
+    for (mysqlx::Warning warn : res.getWarnings()) {
+      std::cout << warn.getMessage() << std::endl;
+    }
+  }
 }

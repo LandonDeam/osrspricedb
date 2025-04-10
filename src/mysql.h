@@ -25,7 +25,7 @@ class db_connection {
   static void connect_tables();
   static void build_schema();
   static void build_price_series();
-  static void build_price_updated();
+  static void build_price_update();
   static void build_item_map();
 
  public:
