@@ -17,11 +17,11 @@ void env::loadEnvVars(const std::string& filePath) {
             if (pos != std::string::npos) {
                 std::string key = line.substr(0, pos);
                 std::string value = line.substr(pos + 1);
-                #ifdef _POSIX_VERSION
-                std::setenv(key.c_str(), value.c_str(), 1);
-                #else  // _POSIX_VERSION
+                #ifdef __unix__
+                setenv(key.c_str(), value.c_str(), 1);
+                #else  // __unix__
                 _putenv_s(key.c_str(), value.c_str());
-                #endif  // _POSIX_VERSION
+                #endif  // __unix__
             }
         }
         file.close();
