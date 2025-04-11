@@ -19,7 +19,7 @@ class db_connection {
   inline static std::shared_ptr<mysqlx::Session> sess;
   inline static std::shared_ptr<mysqlx::Schema> db;
   inline static std::shared_ptr<mysqlx::Table> price_series;
-  inline static std::shared_ptr<mysqlx::Table> price_updated;
+  inline static std::shared_ptr<mysqlx::Table> price_update;
   inline static std::shared_ptr<mysqlx::Table> item_map;
 
   static void connect_tables();

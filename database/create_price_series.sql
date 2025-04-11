@@ -1,12 +1,9 @@
-USE osrs_market;
+CREATE TABLE IF NOT EXISTS osrs_market.price_series(
+ID MEDIUMINT NOT NULL,
+updated TIMESTAMP(0) NOT NULL,
+fetched TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-CREATE TABLE IF NOT EXISTS `prices_series`(
-`ID` MEDIUMINT NOT NULL,
-`updated` TIMESTAMP(0) NOT NULL,
-`fetched` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (ID, updated) REFERENCES osrs_market.price_update(ID, updated) ON UPDATE CASCADE,
 
-FOREIGN KEY (`updated`) REFERENCES `price_update`(`updated`),
-FOREIGN KEY (`ID`) REFERENCES `item_map`(`ID`) ON UPDATE CASCADE,
-
-PRIMARY KEY (`ID`, `fetched`)
+PRIMARY KEY (ID, fetched)
 );
