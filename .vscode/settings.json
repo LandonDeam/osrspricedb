@@ -113,4 +113,17 @@
     // },
     "docwriter.style": "Doxygen",
     "editor.tabSize": 2,
+    "c-cpp-flylint.includePaths": [
+        "${workspaceFolder}/src/",
+    ],
+    "c-cpp-flylint.excludeFromWorkspacePaths": [
+        "build/",
+        "~/.conan2/p/"
+    ],
+    "c-cpp-flylint.standard": [
+        "c++20"
+    ],
+    "clangd.arguments": [
+        "-compile-commands-dir=${workspaceFolder}/build/Release"
+    ],
 }
