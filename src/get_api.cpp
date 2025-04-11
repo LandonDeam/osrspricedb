@@ -1,6 +1,21 @@
 // Copyright Landon Deam 2024
 
 #include "get_api.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "Poco/Net/HTTPRequest.h"
+#include "Poco/Net/HTTPClientSession.h"
+#include "Poco/Net/HTTPSClientSession.h"
+#include "Poco/Net/HTTPResponse.h"
+#include "Poco/Net/InvalidCertificateHandler.h"
+#include "Poco/Net/AcceptCertificateHandler.h"
+#include "Poco/Net/SSLManager.h"
+#include "Poco/Net/Context.h"
+#include "Poco/URI.h"
+#include "Poco/StreamCopier.h"
+#include "Poco/Exception.h"
+#include "item_map.h"
 
 /// @brief Creates a connection with a URI
 /// @param uri URI to connect to

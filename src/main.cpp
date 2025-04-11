@@ -6,6 +6,7 @@
 #include <string>
 #include "env.h"
 #include "mysql.h"
+#include "get_api.h"
 
 int main() {
   env::loadEnvVars(".env");

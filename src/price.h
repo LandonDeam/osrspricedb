@@ -9,13 +9,13 @@
 class price {
  public:
   price();
-  price(int pri, uint32_t timestamp);
-  void update(int new_price, uint32_t timestamp);
+  price(int pri, uint64_t timestamp);
+  void update(int new_price, uint64_t timestamp);
   int get_price();
-  uint32_t get_timestamp();
+  uint64_t get_timestamp();
  private:
   int pri;
-  uint32_t timestamp;
+  uint64_t timestamp;
 };
 
 #endif  // PRICE_H_

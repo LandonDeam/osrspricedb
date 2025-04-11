@@ -1,6 +1,12 @@
 // Copyright Landon Deam 2024
 
 #include "item_map.h"
+#include <string>
+#include <unordered_map>
+#include <regex>
+#include <sstream>
+#include "item.h"
+
 
 /// @brief unordered map storing all items' current data
 std::unordered_map<int, item> item_map::items;
@@ -8,7 +14,7 @@ std::unordered_map<int, item> item_map::items;
 /// @brief Uses `data` to update the item map with the given `type`
 /// @param data `std::ostringstream` containing JSON data to parse
 /// @param type `std::string` representing what is in `data`
-void item_map::update(std::ostringstream& data, const std::string& type) {
+void item_map::update(const std::ostringstream& data, const std::string& type) {
   if (!type.compare("price")) {
     update_price(data);
   } else if (!type.compare("info")) {
@@ -33,7 +39,7 @@ void item_map::verifID(int ID) {
 
 /// @brief Updates the price of all `item`s
 /// @param data `std::ostringstream` with JSON data to parse into price data
-void item_map::update_price(std::ostringstream& data) {
+void item_map::update_price(const std::ostringstream& data) {
   std::regex srch(R"#("(\d+)":\{"high":(\d+),"highTime":(\d+),"low":(\d+),"lowTime":(\d+)\})#",
     std::regex_constants::ECMAScript);
   std::string dat = data.str();
@@ -53,7 +59,7 @@ void item_map::update_price(std::ostringstream& data) {
 
 /// @brief Updates all of the mapping data for the items
 /// @param data `std::ostringstream` with JSON data to parse into mapping data
-void item_map::update_info(std::ostringstream& data) {
+void item_map::update_info(const std::ostringstream& data) {
   std::regex srch(R"#(\{"examine":"(.+?)","id":(\d+),"members":(true|false),"lowalch":(\d+),"limit":(\d+),"value":(\d+),"highalch":(\d+),"icon":"(.+?)","name":"(.+?)"\})#",
     std::regex_constants::ECMAScript);
   std::string dat = data.str();
