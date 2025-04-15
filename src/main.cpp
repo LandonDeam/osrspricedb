@@ -1,8 +1,6 @@
 // Copyright Landon Deam 2024
 
 #include "main.h"
-#include <stdlib.h>
-#include <cstdlib>
 #include <string>
 #include "env.h"
 #include "mysql.h"

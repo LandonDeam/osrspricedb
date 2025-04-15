@@ -30,7 +30,7 @@ class osrs_price_dbRecipe(ConanFile):
     def generate(self):
         deps = CMakeDeps(self)
         deps.generate()
-        tc = CMakeToolchain(self)
+        tc = CMakeToolchain(self, generator="Ninja")
         tc.cache_variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = "ON"
         tc.generate()
 

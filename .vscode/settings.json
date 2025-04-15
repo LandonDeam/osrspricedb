@@ -124,6 +124,6 @@
         "c++20"
     ],
     "clangd.arguments": [
-        "-compile-commands-dir=${workspaceFolder}/build/Release"
+        "-compile-commands-dir=build"
     ],
 }
