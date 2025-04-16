@@ -38,7 +38,8 @@ class db_connection {
  public:
   static void init();
   static void connect_db();
-  static void build_table(std::string table_name, std::string create_command);
+  static void build_table(const std::string& table_name,
+    const std::string& create_command);
   static void close();
 };
 

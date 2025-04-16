@@ -101,12 +101,12 @@ void db_connection::build_price_update() {
 }
 
 void db_connection::build_item_map() {
-  build_table("item table",
+  build_table("item map",
     utils::readTextFile("database/create_item_map.sql"));
 }
 
-void db_connection::build_table(std::string table_name,
-  std::string create_command) {
+void db_connection::build_table(const std::string& table_name,
+  const std::string& create_command) {
   std::cout << "Building " << table_name << " table..." << std::endl;
   try {
     sess->sql("START TRANSACTION;");
