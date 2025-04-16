@@ -17,9 +17,9 @@ class item_map : item {
  private:
   std::string name, examine, icon;
   bool members;
-  int lowalch, highalch;
-  int limit;
   int value;
+  int lowalch, highalch;  // optional
+  int limit;  // optional
 };
 
 #endif  // ITEM_MAP_H_
