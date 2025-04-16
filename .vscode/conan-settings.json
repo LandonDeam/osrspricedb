@@ -4,11 +4,11 @@
             "name": "osrspricedb",
             "conanFile": "${workspaceFolder}/conanfile.py",
             "profile": "default",
-            "installArg": "--build missing",
-            "buildArg": "",
-            "createUser": "landon",
-            "createChannel": "development",
-            "createArg": ""
+            "installArg": "--build=missing -o:b \"!cmake/*: cmake/[>=3 <4]\" -s build_type=Release",
+            "buildArg": "--build=missing -o:b \"!cmake/*: cmake/[>=3 <4]\" -s build_type=Release",
+            "createUser": "osrsdb",
+            "createChannel": "Release",
+            "createArg": "--build=missing -o:b \"!cmake/*: cmake/[>=3 <4]\" -s build_type=Release"
         }
     ]
 }
