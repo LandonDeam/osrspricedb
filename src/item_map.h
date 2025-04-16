@@ -4,20 +4,22 @@
 #ifndef ITEM_MAP_H_
 #define ITEM_MAP_H_
 
-#include <unordered_map>
-#include <string>
 #include <sstream>
+#include <string>
 #include "item.h"
 
-class item_map {
+class item_map : item {
  public:
-  static void update(const std::ostringstream& data, const std::string& type);
-  static item get(int ID);
+  item_map(const int& ID, const std::string& name, const std::string& examine,
+    const std::string& icon, const bool& members, const int& lowalch,
+    const int& highalch, const int& limit, const int& value);
+  void update(const std::ostringstream& data);
  private:
-  static std::unordered_map<int, item> items;
-  static void verifID(int ID);
-  static void update_price(const std::ostringstream& data);
-  static void update_info(const std::ostringstream& data);
+  std::string name, examine, icon;
+  bool members;
+  int lowalch, highalch;
+  int limit;
+  int value;
 };
 
 #endif  // ITEM_MAP_H_

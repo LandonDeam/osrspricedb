@@ -10,6 +10,8 @@
 #include "utils.h"
 
 void db_connection::init() {
+  size_t bufferSize;
+
   username = utils::urlEncode(std::getenv("MYSQL_USERNAME"));
   password = utils::urlEncode(std::getenv("MYSQL_PASSWORD"));
   port = std::getenv("MYSQL_PORT");
@@ -89,67 +91,41 @@ void db_connection::build_schema() {
 }
 
 void db_connection::build_price_series() {
-  std::cout << "Building price series table..." << std::endl;
-  try {
-    sess->sql("START TRANSACTION;");
-    mysqlx::SqlResult res = sess
-      ->sql(utils::readTextFile("database/create_price_series.sql"))
-      .execute();
-    if (res.getWarningsCount() > 0) {
-      std::cout << "Warning(s) while creating price series table:" << std::endl;
-      for (mysqlx::Warning warn : res.getWarnings()) {
-        std::cout << warn.getMessage() << std::endl;
-      }
-    }
-
-    sess->sql("COMMIT;").execute();
-  } catch (const mysqlx::Error& e) {
-    std::cerr << "Error while creating price series table:"
-              << e.what() << std::endl;
-    sess->sql("ROLLBACK;").execute();
-  }
+  build_table("price series",
+    utils::readTextFile("database/create_price_series.sql"));
 }
 
 void db_connection::build_price_update() {
-  std::cout << "Building price update table..." << std::endl;
-  try {
-    sess->sql("START TRANSACTION;");
-    mysqlx::SqlResult res = sess
-      ->sql(utils::readTextFile("database/create_price_update.sql"))
-      .execute();
-
-    if (res.getWarningsCount() > 0) {
-      std::cout << "Warning(s) while creating price update table:" << std::endl;
-      for (mysqlx::Warning warn : res.getWarnings()) {
-        std::cout << warn.getMessage() << std::endl;
-      }
-    }
-
-    sess->sql("COMMIT;").execute();
-  } catch (std::exception e) {
-    std::cerr << "Error building price update table: " << e.what() << std::endl;
-    sess->sql("ROLLBACK;").execute();
-  }
+  build_table("price update",
+    utils::readTextFile("database/create_price_update.sql"));
 }
 
 void db_connection::build_item_map() {
-  std::cout << "Building item map table..." << std::endl;
+  build_table("item table",
+    utils::readTextFile("database/create_item_map.sql"));
+}
+
+void db_connection::build_table(std::string table_name,
+  std::string create_command) {
+  std::cout << "Building " << table_name << " table..." << std::endl;
   try {
     sess->sql("START TRANSACTION;");
     mysqlx::SqlResult res = sess
-      ->sql(utils::readTextFile("database/create_item_map.sql"))
+      ->sql(create_command)
       .execute();
 
     if (res.getWarningsCount() > 0) {
-      std::cout << "Warning(s) while creating item map table:" << std::endl;
+      std::cout << "Warning(s) while creating " << table_name << " table:"
+        << std::endl;
       for (mysqlx::Warning warn : res.getWarnings()) {
         std::cout << warn.getMessage() << std::endl;
       }
     }
 
     sess->sql("COMMIT;").execute();
-  } catch (std::exception e) {
-    std::cerr << "Error building item map table: " << e.what() << std::endl;
+  } catch (std::exception& e) {
+    std::cerr << "Error building " << table_name << " table: " << e.what()
+      << std::endl;
     sess->sql("ROLLBACK;").execute();
   }
 }

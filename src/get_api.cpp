@@ -15,7 +15,6 @@
 #include "Poco/URI.h"
 #include "Poco/StreamCopier.h"
 #include "Poco/Exception.h"
-#include "item_map.h"
 
 /// @brief Creates a connection with a URI
 /// @param uri URI to connect to
@@ -50,7 +49,6 @@ void getter::get(const std::string& ep,
     if (response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK) {
       Poco::StreamCopier::copyStream(responseStream, responseStr);
       responseFile << responseStr.str();
-      item_map::update(responseStr, type);
     } else {
       std::cerr << "Error: " << response.getStatus()
                 << " " << response.getReason() << std::endl;

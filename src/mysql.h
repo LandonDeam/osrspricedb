@@ -7,6 +7,9 @@
 #include <mysqlx/xdevapi.h>
 #include <string>
 #include <memory>
+#include "price_series.h"
+#include "price_update.h"
+#include "item_map.h"
 
 class db_connection {
  private:
@@ -28,9 +31,14 @@ class db_connection {
   static void build_price_update();
   static void build_item_map();
 
+  static void writeToItemMap(const class item_map& item);
+  static void writeToPriceUpdate(const class price_update& item);
+  static void writeToPriceSeries(const class price_series& item);
+
  public:
   static void init();
   static void connect_db();
+  static void build_table(std::string table_name, std::string create_command);
   static void close();
 };
 
