@@ -9,6 +9,22 @@
 #include <memory>
 #include "utils.h"
 
+const char* price_series_sql =
+  #include "../database/create_price_series.sql"
+;
+
+const char* price_update_sql =
+  #include "../database/create_price_update.sql"
+;
+
+const char* item_map_sql =
+  #include "../database/create_item_map.sql"
+;
+
+const char* schema_sql =
+  #include "../database/create_db.sql"
+;
+
 void db_connection::init() {
   size_t bufferSize;
 
@@ -85,24 +101,21 @@ void db_connection::connect_tables() {
 void db_connection::build_schema() {
   // Build schema
   std::cout << "Building database schema..." << std::endl;
-  sess->sql(utils::readTextFile("database/create_db.sql")).execute();
+  sess->sql(schema_sql).execute();
   // Create tables
   connect_tables();
 }
 
 void db_connection::build_price_series() {
-  build_table("price series",
-    utils::readTextFile("database/create_price_series.sql"));
+  build_table("price series", price_series_sql);
 }
 
 void db_connection::build_price_update() {
-  build_table("price update",
-    utils::readTextFile("database/create_price_update.sql"));
+  build_table("price update", price_update_sql);
 }
 
 void db_connection::build_item_map() {
-  build_table("item map",
-    utils::readTextFile("database/create_item_map.sql"));
+  build_table("item map", item_map_sql);
 }
 
 void db_connection::build_table(const std::string& table_name,

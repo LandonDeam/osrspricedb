@@ -24,7 +24,7 @@ getter::getter(Poco::URI uri) {
 
 /// @brief Creates a connectio to a URI represented with a string
 /// @param str String representing a URI
-getter::getter(const std::string str)
+getter::getter(const std::string& str)
   : getter(Poco::URI(str)) {}
 
 /// @brief Gets and parses data from the given endpoint, saving the response in
@@ -81,7 +81,7 @@ Poco::Net::HTTPRequest* getter::generate_request(const std::string& ep) {
         Poco::Net::HTTPRequest::HTTP_1_1);
     request->add(
       "User-Agent",
-      "Landon Deam (landondeam@gmail.com)\n  Testing a GE tracker");
+      "Landon Deam (landondeam@gmail.com)\n  Creating a GE tracker");
     return request;
 }
 

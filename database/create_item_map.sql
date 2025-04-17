@@ -1,3 +1,4 @@
+R""(
 CREATE TABLE IF NOT EXISTS osrs_market.item_map(
 ID MEDIUMINT NOT NULL,
 item_name VARCHAR(100) NOT NULL,
@@ -11,3 +12,4 @@ ge_limit INT,
 
 PRIMARY KEY (ID)
 );
+)""

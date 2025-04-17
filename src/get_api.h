@@ -13,7 +13,7 @@
 class getter {
  public:
   explicit getter(Poco::URI uri);
-  explicit getter(const std::string str);
+  explicit getter(const std::string& str);
   void get_prices();
   void get_info();
  private:

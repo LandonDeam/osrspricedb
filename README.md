@@ -2,6 +2,7 @@
 
 ## Requirements
 Conan 2.0 or higher
+Ninja 1.12 or higher
 MySQL Server with MySQLX plugin
 
 ## Build
