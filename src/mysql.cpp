@@ -9,6 +9,7 @@
 #include <memory>
 #include "utils.h"
 
+// Evil pre-processor shenanigans for importing files as string literals
 const char* price_series_sql =
   #include "../database/create_price_series.sql"
 ;
@@ -25,6 +26,9 @@ const char* schema_sql =
   #include "../database/create_db.sql"
 ;
 
+/**
+* @brief Initialize the database connection.
+*/
 void db_connection::init() {
   size_t bufferSize;
 
@@ -48,6 +52,9 @@ void db_connection::init() {
   initialized = true;
 }
 
+/**
+* @brief Close the database connection.
+*/
 void db_connection::close() {
   try {
     std::cout << "Attempting to close session..." << std::endl;
@@ -59,6 +66,9 @@ void db_connection::close() {
   initialized = false;
 }
 
+/**
+* @brief Connect to the database.
+*/
 void db_connection::connect_db() {
   if (!initialized) {
     init();
@@ -74,6 +84,9 @@ void db_connection::connect_db() {
   }
 }
 
+/**
+* @brief Connect to the tables.
+*/
 void db_connection::connect_tables() {
   std::cout << "Attempting to connect tables..." << std::endl;
   item_map =
@@ -98,6 +111,9 @@ void db_connection::connect_tables() {
   std::cout << "Price series table connected." << std::endl;
 }
 
+/**
+* @brief Builds the database schema and connects to the tables.
+*/
 void db_connection::build_schema() {
   // Build schema
   std::cout << "Building database schema..." << std::endl;
@@ -106,18 +122,32 @@ void db_connection::build_schema() {
   connect_tables();
 }
 
+/**
+* @brief Builds the price series table.
+*/
 void db_connection::build_price_series() {
   build_table("price series", price_series_sql);
 }
 
+/**
+* @brief Builds the price update table.
+*/
 void db_connection::build_price_update() {
   build_table("price update", price_update_sql);
 }
 
+/**
+* @brief Builds the item map table.
+*/
 void db_connection::build_item_map() {
   build_table("item map", item_map_sql);
 }
 
+/**
+* @brief Builds the given table with the specified create command.
+* @param table_name The name of the table to build.
+* @param create_command The SQL command used to create the table.
+*/
 void db_connection::build_table(const std::string& table_name,
   const std::string& create_command) {
   std::cout << "Building " << table_name << " table..." << std::endl;

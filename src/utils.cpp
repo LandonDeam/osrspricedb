@@ -9,6 +9,11 @@
 #include <iomanip>
 #include <cctype>
 
+/**
+* @brief URL-encodes a string.
+* @param input The string to encode.
+* @return The URL-encoded string.
+*/
 std::string utils::urlEncode(const std::string& input) {
   std::stringstream encoded;
   encoded.fill('0');
@@ -26,6 +31,10 @@ std::string utils::urlEncode(const std::string& input) {
   return encoded.str();
 }
 
+/**
+* @brief Creates a directory if it doesn't exist.
+* @param path The path to the directory.
+*/
 void utils::makeFolderIfNotExists(const std::string& path) {
   std::filesystem::path dir_path = path;
   if (!std::filesystem::exists(dir_path)) {
@@ -39,6 +48,11 @@ void utils::makeFolderIfNotExists(const std::string& path) {
   }
 }
 
+/**
+* @brief Reads the content of a text file.
+* @param path The path to the file.
+* @return The content of the file, or null if the file doesn't exist or is a directory.
+*/
 std::string utils::readTextFile(const std::string& path) {
   std::filesystem::path file_path = path;
 

@@ -10,7 +10,7 @@
 /**
  * This function loads environment variables from a specified file path.
  * 
- * @param filePath The `filePath` parameter is a `std::string` type that represents the path to the
+ * @param filePath A `std::string` type that represents the path to the
  * file from which environment variables will be loaded.
  */
 void env::loadEnvVars(const std::string& filePath) {
