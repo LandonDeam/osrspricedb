@@ -26,6 +26,7 @@ class osrs_price_dbRecipe(ConanFile):
     def requirements(self):
         self.requires("mysql-connector-cpp/9.2.0")
         self.requires("poco/1.13.3")
+        self.requires("doxygen/1.13.2")
 
     def generate(self):
         deps = CMakeDeps(self)

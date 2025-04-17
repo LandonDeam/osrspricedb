@@ -8,11 +8,11 @@
 #include <cstdlib>
 
 /**
- * This function loads environment variables from a specified file path.
- * 
- * @param filePath A `std::string` type that represents the path to the
- * file from which environment variables will be loaded.
- */
+* This function loads environment variables from a specified file path.
+* 
+* @param filePath A `std::string` type that represents the path to the
+* file from which environment variables will be loaded.
+*/
 void env::loadEnvVars(const std::string& filePath) {
   try {
     std::ifstream file(filePath);
