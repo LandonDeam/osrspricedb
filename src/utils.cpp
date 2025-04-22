@@ -1,6 +1,8 @@
 // Copyright 2025 Landon Deam
 
 #include "utils.h"
+#include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <filesystem>
 #include <string>
@@ -8,6 +10,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cctype>
+#include <utility>
 
 /**
 * @brief URL-encodes a string.
@@ -82,4 +85,18 @@ std::string utils::readTextFile(const std::string& path) {
   }
 
   return nullptr;
+}
+
+const std::unordered_map<int, item_map>
+  utils::item_maps(const std::string& json) {
+  std::unordered_map<int, item_map> items;
+  return items;
+}
+
+const std::pair<std::unordered_map<int, price_update>, uint64_t>
+  utils::item_prices(const std::string& json) {
+    std::unordered_map<int, price_update> items;
+    uint64_t timestamp;
+
+  return std::make_pair(items, timestamp);
 }

@@ -1,13 +1,13 @@
 // Copyright 2025 Landon Deam
 
 #pragma once
+#include <cstdint>
 #ifndef MYSQL_H_
 #define MYSQL_H_
 
 #include <mysqlx/xdevapi.h>
 #include <string>
 #include <memory>
-#include "price_series.h"
 #include "price_update.h"
 #include "item_map.h"
 
@@ -30,16 +30,15 @@ class db_connection {
   static void build_price_series();
   static void build_price_update();
   static void build_item_map();
+  static void build_table(const std::string& table_name,
+    const std::string& create_command);
 
   static void writeToItemMap(const class item_map& item);
-  static void writeToPriceUpdate(const class price_update& item);
-  static void writeToPriceSeries(const class price_series& item);
+  static void writeToPrices(const class price_update& item, uint64_t timestamp);
 
  public:
   static void init();
   static void connect_db();
-  static void build_table(const std::string& table_name,
-    const std::string& create_command);
   static void close();
 };
 
