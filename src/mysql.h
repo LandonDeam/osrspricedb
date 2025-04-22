@@ -8,6 +8,7 @@
 #include <mysqlx/xdevapi.h>
 #include <string>
 #include <memory>
+#include <unordered_map>
 #include "price_update.h"
 #include "item_map.h"
 
@@ -33,13 +34,16 @@ class db_connection {
   static void build_table(const std::string& table_name,
     const std::string& create_command);
 
-  static void writeToItemMap(const class item_map& item);
-  static void writeToPrices(const class price_update& item, uint64_t timestamp);
-
  public:
   static void init();
   static void connect_db();
   static void close();
+
+  // TODO(Landon Deam): Implement the following methods
+  static void writeItemMap(const std::unordered_map<int, class item_map>& item);
+  static void writePrices(const std::unordered_map<int,
+                            class price_update>& prices,
+                          uint64_t timestamp);
 };
 
 #endif  // MYSQL_H_

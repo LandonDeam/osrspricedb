@@ -1,7 +1,7 @@
 // Copyright 2025 Landon Deam
 
 #include "utils.h"
-#include <cstddef>
+#include <chrono>
 #include <cstdint>
 #include <iostream>
 #include <filesystem>
@@ -90,13 +90,21 @@ std::string utils::readTextFile(const std::string& path) {
 const std::unordered_map<int, item_map>
   utils::item_maps(const std::string& json) {
   std::unordered_map<int, item_map> items;
+  // TODO(Landon Deam): implement json parsing and turning into unordered map
   return items;
 }
 
 const std::pair<std::unordered_map<int, price_update>, uint64_t>
   utils::item_prices(const std::string& json) {
     std::unordered_map<int, price_update> items;
-    uint64_t timestamp;
+    const uint64_t timestamp = std::chrono::duration_cast<
+                                std::chrono::seconds>(
+                                  std::chrono::system_clock::now()
+                                  .time_since_epoch()
+                                )
+                                .count();
+
+    // TODO(Landon Deam): implement json parsing and turning into unordered map
 
   return std::make_pair(items, timestamp);
 }

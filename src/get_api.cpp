@@ -15,6 +15,8 @@
 #include "Poco/URI.h"
 #include "Poco/StreamCopier.h"
 #include "Poco/Exception.h"
+#include "utils.h"
+#include "mysql.h"
 
 /// @brief Creates a connection with a URI
 /// @param uri URI to connect to
@@ -52,8 +54,12 @@ void getter::get(const std::string& ep,
     std::ostringstream responseStr;
     if (response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK) {
       Poco::StreamCopier::copyStream(responseStream, responseStr);
-      // TODO(Landon Deam): Implement parsing for JSON files to relevant data
-      // structures
+      if (type.compare("price") == 0) {
+        const auto& [prices, time] = utils::item_prices(responseStr.str());
+        db_connection::writePrices(prices, time);
+      } else if (type.compare("info") == 0) {
+        db_connection::writeItemMap(utils::item_maps(responseStr.str()));
+      }
       responseFile << responseStr.str();
     } else {
       std::cerr << "Error: " << response.getStatus()
