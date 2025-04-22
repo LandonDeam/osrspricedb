@@ -123,8 +123,5 @@
     "c-cpp-flylint.standard": [
         "c++20"
     ],
-    "clangd.arguments": [
-        "-compile-commands-dir=build/Release"
-    ],
     "docwriter.progress.trackClasses": true,
 }
