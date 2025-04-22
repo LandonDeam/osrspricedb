@@ -18,14 +18,15 @@
 */
 item_map::item_map(const int& ID, const std::string& name,
   const std::string& examine, const std::string& icon, const bool& members,
-  const int& lowalch, const int& highalch, const int& limit, const int& value)
+  const int& value, const int& lowalch = -1,
+  const int& highalch = -1, const int& limit = -1)
   : item(ID) {
-    this->name = name;
-    this->examine = examine;
-    this->icon = icon;
-    this->members = members;
-    this->lowalch = lowalch;
-    this->highalch = highalch;
-    this->limit = limit;
-    this->value = value;
+  this->name = name;
+  this->examine = examine;
+  this->icon = icon;
+  this->members = members;
+  this->lowalch = lowalch;
+  this->highalch = highalch;
+  this->limit = limit;
+  this->value = value;
 }

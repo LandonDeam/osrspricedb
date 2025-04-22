@@ -12,7 +12,7 @@ class item_map : item {
  public:
   item_map(const int& ID, const std::string& name, const std::string& examine,
     const std::string& icon, const bool& members, const int& lowalch,
-    const int& highalch, const int& limit, const int& value);
+    const int& value, const int& highalch, const int& limit);
   void update(const std::ostringstream& data);
  private:
   std::string name, examine, icon;

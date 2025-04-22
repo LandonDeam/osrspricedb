@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 #include "price_update.h"
 #include "item_map.h"
 
@@ -20,6 +21,12 @@ class utils {
     item_maps(const std::string& json);
   static const std::pair<std::unordered_map<int, price_update>, uint64_t>
     item_prices(const std::string& json);
+  static const std::vector<std::unordered_map<std::string, std::string>>
+    json_arr_parse(const std::string& input);
+  static void erase_all(std::string* str, char c);
+  static std::vector<std::string> split(const std::string &s, char delim);
+  static std::vector<std::string> split_enclosed(const std::string& s,
+    char delimiter, char enclosure);
 };
 
 #endif  // UTILS_H_

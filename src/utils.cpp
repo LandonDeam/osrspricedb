@@ -11,6 +11,8 @@
 #include <iomanip>
 #include <cctype>
 #include <utility>
+#include <algorithm>
+#include <regex>
 
 /**
 * @brief URL-encodes a string.
@@ -107,4 +109,63 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
     // TODO(Landon Deam): implement json parsing and turning into unordered map
 
   return std::make_pair(items, timestamp);
+}
+
+const std::vector<std::unordered_map<std::string, std::string>>
+  utils::json_arr_parse(const std::string& input) {
+  std::vector<std::unordered_map<std::string, std::string>> arr;
+  std::string parse = input;
+  erase_all(&parse, '[');
+  erase_all(&parse, ']');
+  std::vector<std::string> tokens = split(parse, '}');
+  for (auto token : tokens) {
+    erase_all(&token, '{');
+    if (token.compare("") == 0) {
+      continue;
+    }
+    std::vector<std::string> kv_pairs = split_enclosed(token, ',', '"');
+    for (auto kv_pair : kv_pairs) {
+      if (kv_pair.compare("") == 0) {
+        continue;
+      }
+      // TODO(Landon Deam): Key Value pairs
+    }
+  }
+  return arr;
+}
+
+void utils::erase_all(std::string* str, char c) {
+  str->erase(std::remove(str->begin(), str->end(), c), str->end());
+}
+
+std::vector<std::string> utils::split(const std::string &s, char delim) {
+  std::vector<std::string> result;
+  std::stringstream ss(s);
+  std::string item;
+
+  while (getline(ss, item, delim)) {
+      result.push_back(item);
+  }
+
+  return result;
+}
+
+std::vector<std::string> utils::split_enclosed(const std::string& s,
+                                        char delimiter, char enclosure) {
+    std::vector<std::string> tokens;
+    std::string current_token;
+    bool inside_enclosure = false;
+
+    for (char c : s) {
+        if (c == enclosure) {
+            inside_enclosure = !inside_enclosure;
+        } else if (c == delimiter && !inside_enclosure) {
+            tokens.push_back(current_token);
+            current_token = "";
+        } else {
+            current_token += c;
+        }
+    }
+    tokens.push_back(current_token);
+    return tokens;
 }
