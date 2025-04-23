@@ -176,15 +176,16 @@ void db_connection::build_table(const std::string& table_name,
 void db_connection::writeItemMap(
   const std::unordered_map<int, class item_map>& items) {
   sess->sql("START TRANSACTION;");
+  std::string last_query = "START TRANSACTION;";
   try {
     for (auto [ID, item] : items) {
       std::string query = R"(REPLACE INTO osrs_market.item_map (ID, item_name, icon, examine, members, item_value, lowalch, highalch, ge_limit) VALUES ()";
       query+=std::to_string(item.getID())+", ";
       query+="\""+item.getName()+"\", ";
-      query+='"'+item.getIcon()+'"';
-      query+='"'+item.getExamine()+'"';
+      query+="\""+item.getIcon()+"\", ";
+      query+="\""+item.getExamine()+"\", ";
+      query+=item.isMembers() ? "true, " : "false, ";
       query+=std::to_string(item.getValue())+", ";
-      query+=std::to_string(item.isMembers())+", ";
       if (item.getLowAlch() >= 0) {
         query+=std::to_string(item.getLowAlch())+", ";
       } else {
@@ -201,12 +202,14 @@ void db_connection::writeItemMap(
         query+="NULL";
       }
       query+=");";
+      last_query = query;
       sess->sql(query).execute();
     }
 
     sess->sql("COMMIT;").execute();
   } catch (std::exception& e) {
     std::cerr << "Error writing item map: " << e.what() << std::endl;
+    std::cout << "Last query: " << last_query << std::endl;
     sess->sql("ROLLBACK;").execute();
   }
 }

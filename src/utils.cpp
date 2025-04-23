@@ -104,23 +104,23 @@ const std::unordered_map<int, item_map>
     if (item.find("lowalch") == item.end()) {
       if (item.find("limit") == item.end()) {
         items.insert_or_assign(ID,
-          new item_map(ID, name, desc, icon, members, value));
+          item_map(ID, name, desc, icon, members, value));
       } else {
         int limit = std::stoi(item.at("limit"));
         items.insert_or_assign(ID,
-          new item_map(ID, name, desc, icon, members, value, -1, -1, limit));
+          item_map(ID, name, desc, icon, members, value, -1, -1, limit));
       }
     } else {
       int lowalch = std::stoi(item.at("lowalch"));
       int highalch = std::stoi(item.at("highalch"));
       if (item.find("limit") == item.end()) {
         items.insert_or_assign(ID,
-          new item_map(ID, name, desc, icon,
+          item_map(ID, name, desc, icon,
                               members, value, lowalch, highalch));
       } else {
         int limit = std::stoi(item.at("limit"));
         items.insert_or_assign(ID,
-          new item_map(ID, name, desc, icon, members, value,
+          item_map(ID, name, desc, icon, members, value,
                               lowalch, highalch, limit));
       }
     }
