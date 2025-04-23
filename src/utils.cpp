@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include <utility>
 #include <algorithm>
-#include <regex>
 
 /**
 * @brief URL-encodes a string.
@@ -93,7 +92,39 @@ std::string utils::readTextFile(const std::string& path) {
 const std::unordered_map<int, item_map>
   utils::item_maps(const std::string& json) {
   std::unordered_map<int, item_map> items;
-  // TODO(Landon Deam): implement json parsing and turning into unordered map
+  std::vector<std::unordered_map<std::string, std::string>> raw =
+  json_arr_parse(json);
+  for (const auto& item : raw) {
+    int ID = std::stoi(item.at("id"));
+    std::string name = item.at("name");
+    std::string desc = item.at("examine");
+    std::string icon = item.at("icon");
+    int value = std::stoi(item.at("value"));
+    bool members = item.at("members").compare("true") == 0;
+    if (item.find("lowalch") == item.end()) {
+      if (item.find("limit") == item.end()) {
+        items.insert_or_assign(ID,
+          new item_map(ID, name, desc, icon, members, value));
+      } else {
+        int limit = std::stoi(item.at("limit"));
+        items.insert_or_assign(ID,
+          new item_map(ID, name, desc, icon, members, value, -1, -1, limit));
+      }
+    } else {
+      int lowalch = std::stoi(item.at("lowalch"));
+      int highalch = std::stoi(item.at("highalch"));
+      if (item.find("limit") == item.end()) {
+        items.insert_or_assign(ID,
+          new item_map(ID, name, desc, icon,
+                              members, value, lowalch, highalch));
+      } else {
+        int limit = std::stoi(item.at("limit"));
+        items.insert_or_assign(ID,
+          new item_map(ID, name, desc, icon, members, value,
+                              lowalch, highalch, limit));
+      }
+    }
+  }
   return items;
 }
 
