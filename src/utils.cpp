@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cctype>
+#include <unordered_map>
 #include <utility>
 #include <algorithm>
 #include <regex>
@@ -123,13 +124,20 @@ const std::vector<std::unordered_map<std::string, std::string>>
     if (token.compare("") == 0) {
       continue;
     }
-    std::vector<std::string> kv_pairs = split_enclosed(token, ',', '"');
+    std::unordered_map<std::string, std::string> data;
+    std::vector<std::string> kv_pairs =
+      split_enclosed_inclusive(token, ',', '"');
     for (auto kv_pair : kv_pairs) {
       if (kv_pair.compare("") == 0) {
         continue;
       }
-      // TODO(Landon Deam): Key Value pairs
+      std::vector<std::string> kv = split_enclosed_exclusive(kv_pair, ':', '"');
+      if (kv.size() != 2) {
+        continue;
+      }
+      data.insert_or_assign(kv[0], kv[1]);
     }
+    arr.push_back(data);
   }
   return arr;
 }
@@ -150,7 +158,28 @@ std::vector<std::string> utils::split(const std::string &s, char delim) {
   return result;
 }
 
-std::vector<std::string> utils::split_enclosed(const std::string& s,
+std::vector<std::string> utils::split_enclosed_inclusive(const std::string& s,
+                                        char delimiter, char enclosure) {
+    std::vector<std::string> tokens;
+    std::string current_token;
+    bool inside_enclosure = false;
+
+    for (char c : s) {
+        if (c == enclosure) {
+            inside_enclosure = !inside_enclosure;
+            current_token += c;
+        } else if (c == delimiter && !inside_enclosure) {
+            tokens.push_back(current_token);
+            current_token = "";
+        } else {
+            current_token += c;
+        }
+    }
+    tokens.push_back(current_token);
+    return tokens;
+}
+
+std::vector<std::string> utils::split_enclosed_exclusive(const std::string& s,
                                         char delimiter, char enclosure) {
     std::vector<std::string> tokens;
     std::string current_token;

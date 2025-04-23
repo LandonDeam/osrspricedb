@@ -25,7 +25,9 @@ class utils {
     json_arr_parse(const std::string& input);
   static void erase_all(std::string* str, char c);
   static std::vector<std::string> split(const std::string &s, char delim);
-  static std::vector<std::string> split_enclosed(const std::string& s,
+  static std::vector<std::string> split_enclosed_inclusive(const std::string& s,
+    char delimiter, char enclosure);
+  static std::vector<std::string> split_enclosed_exclusive(const std::string& s,
     char delimiter, char enclosure);
 };
 
