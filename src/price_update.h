@@ -7,7 +7,7 @@
 #include <inttypes.h>
 #include "item.h"
 
-class price_update : item {
+class price_update : public item {
  public:
   price_update(const int& ID, const int& buy, const int& sell,
     const uint64_t& timestamp);

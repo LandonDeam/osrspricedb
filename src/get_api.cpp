@@ -55,8 +55,8 @@ void getter::get(const std::string& ep,
     if (response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK) {
       Poco::StreamCopier::copyStream(responseStream, responseStr);
       if (type.compare("price") == 0) {
-        const auto& [prices, time] = utils::item_prices(responseStr.str());
-        db_connection::writePrices(prices, time);
+        // const auto& [prices, time] = utils::item_prices(responseStr.str());
+        // db_connection::writePrices(prices, time);
       } else if (type.compare("info") == 0) {
         db_connection::writeItemMap(utils::item_maps(responseStr.str()));
       }
