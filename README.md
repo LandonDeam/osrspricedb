@@ -8,6 +8,4 @@
 3. MySQL Server with MySQLX plugin
 
 ## Build
-1. Install Conan packages and setup project: `conan install . --build=missing -o:b "!cmake/*: cmake/[>=3 <4]" -s build_type=Release`
-
-2. Build the project: `conan build . --build=missing -o:b "!cmake/*: cmake/[>=3 <4]" -s build_type=Release`
+Build the project: `conan build . --build=missing -o:b "!cmake/*: cmake/[>=3 <4]" -s build_type=Release`
