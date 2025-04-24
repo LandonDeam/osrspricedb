@@ -139,7 +139,6 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
                               )
                               .count();
 
-    // TODO(Landon Deam): implement json parsing and turning into unordered map
   std::string parse = json;
   size_t start = parse.find("{\"data\":{");
   parse.erase(start, start+9);
