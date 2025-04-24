@@ -1,7 +1,6 @@
 // Copyright 2025 Landon Deam
 
 #include "utils.h"
-#include "price_update.h"
 #include <chrono>
 #include <cstdint>
 #include <iostream>
@@ -14,6 +13,7 @@
 #include <unordered_map>
 #include <utility>
 #include <algorithm>
+#include "price_update.h"
 
 /**
 * @brief URL-encodes a string.
