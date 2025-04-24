@@ -5,9 +5,9 @@
 
 2. Ninja 1.12 or higher
 
-3. MySQL Server with MySQLX plugin
+3. MySQL Server with MySQLX plugin (provided by default in Oracle's MySQL server as of version 5.7)
+
+4. (Optional) Doxygen 
 
 ## Build
-1. Install Conan packages and setup project: `conan install . --build=missing -o:b "!cmake/*: cmake/[>=3 <4]" -s build_type=Release`
-
-2. Build the project: `conan build . --build=missing -o:b "!cmake/*: cmake/[>=3 <4]" -s build_type=Release`
+Build the project: `conan build . --build=missing -o:b "!cmake/*: cmake/[>=3 <4]" -s build_type=Release`
