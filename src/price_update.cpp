@@ -10,21 +10,29 @@
 * @param timestamp The timestamp of the update.
 */
 price_update::price_update(const int&  ID, const int& buy, const int& sell,
-  const uint64_t& timestamp) : item(ID) {
-  update(buy, sell, timestamp);
+  const uint64_t& buy_timestamp, const uint64_t& sell_timestamp) : item(ID) {
+    update_buy(buy, buy_timestamp);
+    update_sell(sell, sell_timestamp);
 }
 
 /**
 * @brief Updates the buy and sell prices and timestamp.
 * @param buy The new buy price.
+* @param timestamp The timestamp of the update.
+*/
+void price_update::update_buy(const int& buy, const uint64_t& timestamp) {
+  this->buy = buy;
+  this->buy_timestamp = timestamp;
+}
+
+/**
+* @brief Updates the buy and sell prices and timestamp.
 * @param sell The new sell price.
 * @param timestamp The timestamp of the update.
 */
-void price_update::update(const int& buy, const int& sell,
-    const uint64_t& timestamp) {
-  this->buy = buy;
+void price_update::update_sell(const int& sell, const uint64_t& timestamp) {
   this->sell = sell;
-  this->timestamp = timestamp;
+  this->sell_timestamp = timestamp;
 }
 
 /**
@@ -47,6 +55,14 @@ int price_update::get_sell() {
 * @brief Returns the timestamp.
 * @return The timestamp.
 */
-uint64_t price_update::get_timestamp() {
-  return this->timestamp;
+uint64_t price_update::get_buy_timestamp() {
+  return this->buy_timestamp;
+}
+
+/**
+* @brief Returns the timestamp.
+* @return The timestamp.
+*/
+uint64_t price_update::get_sell_timestamp() {
+  return this->sell_timestamp;
 }

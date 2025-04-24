@@ -27,8 +27,14 @@ class utils {
   static std::vector<std::string> split(const std::string &s, char delim);
   static std::vector<std::string> split_enclosed_inclusive(const std::string& s,
     char delimiter, char enclosure);
+  static std::vector<std::string> split_enclosed_inclusive(const std::string& s,
+    char delimiter, char start_enclosure,
+    char end_enclosure);
   static std::vector<std::string> split_enclosed_exclusive(const std::string& s,
     char delimiter, char enclosure);
+  static std::vector<std::string> split_enclosed_exclusive(const std::string& s,
+    char delimiter, char start_enclosure,
+    char end_enclosure);
 };
 
 #endif  // UTILS_H_

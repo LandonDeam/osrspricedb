@@ -1,6 +1,7 @@
 // Copyright 2025 Landon Deam
 
 #include "utils.h"
+#include "price_update.h"
 #include <chrono>
 #include <cstdint>
 #include <iostream>
@@ -130,15 +131,42 @@ const std::unordered_map<int, item_map>
 
 const std::pair<std::unordered_map<int, price_update>, uint64_t>
   utils::item_prices(const std::string& json) {
-    std::unordered_map<int, price_update> items;
-    const uint64_t timestamp = std::chrono::duration_cast<
-                                std::chrono::seconds>(
-                                  std::chrono::system_clock::now()
-                                  .time_since_epoch()
-                                )
-                                .count();
+  std::unordered_map<int, price_update> items;
+  const uint64_t timestamp = std::chrono::duration_cast<
+                              std::chrono::seconds>(
+                                std::chrono::system_clock::now()
+                                .time_since_epoch()
+                              )
+                              .count();
 
     // TODO(Landon Deam): implement json parsing and turning into unordered map
+  std::string parse = json;
+  size_t start = parse.find("{\"data\":{");
+  parse.erase(start, start+9);
+  size_t end = parse.find_last_of("}}");
+  parse.erase(end);
+  std::vector<std::string> items_json =
+    split_enclosed_inclusive(parse, ',', '{', '}');
+  for (const auto& item : items_json) {
+    std::vector<std::string> id_kv =
+      split_enclosed_exclusive(item, ':', '{', '}');
+    std::string id = id_kv[0];
+    erase_all(&id, '"');
+    int ID = std::stoi(id);
+    std::unordered_map<std::string, std::string> kv;
+    std::vector<std::string> price_data =
+      split_enclosed_exclusive(id_kv[0], ',', '"');
+    for (const auto& data : price_data) {
+      std::vector<std::string> data_kv = split(data, ':');
+      kv.insert_or_assign(data_kv[0], data_kv[1]);
+    }
+    items.insert_or_assign(ID, price_update(
+      ID,
+      std::stoi(kv.at("low")),
+      std::stoi(kv.at("high")),
+      std::stoull(kv.at("lowTime")),
+      std::stoull(kv.at("highTime"))));
+  }
 
   return std::make_pair(items, timestamp);
 }
@@ -210,6 +238,31 @@ std::vector<std::string> utils::split_enclosed_inclusive(const std::string& s,
     return tokens;
 }
 
+std::vector<std::string> utils::split_enclosed_inclusive(const std::string& s,
+                                        char delimiter, char start_enclosure,
+                                        char end_enclosure) {
+    std::vector<std::string> tokens;
+    std::string current_token;
+    bool inside_enclosure = false;
+
+    for (char c : s) {
+        if (c == start_enclosure) {
+            inside_enclosure = true;
+            current_token += c;
+        } else if (c == end_enclosure) {
+            inside_enclosure = false;
+            current_token += c;
+        } else if (c == delimiter && !inside_enclosure) {
+            tokens.push_back(current_token);
+            current_token = "";
+        } else {
+            current_token += c;
+        }
+    }
+    tokens.push_back(current_token);
+    return tokens;
+}
+
 std::vector<std::string> utils::split_enclosed_exclusive(const std::string& s,
                                         char delimiter, char enclosure) {
     std::vector<std::string> tokens;
@@ -219,6 +272,29 @@ std::vector<std::string> utils::split_enclosed_exclusive(const std::string& s,
     for (char c : s) {
         if (c == enclosure) {
             inside_enclosure = !inside_enclosure;
+        } else if (c == delimiter && !inside_enclosure) {
+            tokens.push_back(current_token);
+            current_token = "";
+        } else {
+            current_token += c;
+        }
+    }
+    tokens.push_back(current_token);
+    return tokens;
+}
+
+std::vector<std::string> utils::split_enclosed_exclusive(const std::string& s,
+                                        char delimiter, char start_enclosure,
+                                        char end_enclosure) {
+    std::vector<std::string> tokens;
+    std::string current_token;
+    bool inside_enclosure = false;
+
+    for (char c : s) {
+        if (c == start_enclosure && !inside_enclosure) {
+            inside_enclosure = true;
+        } else if (c == end_enclosure && inside_enclosure) {
+            inside_enclosure = false;
         } else if (c == delimiter && !inside_enclosure) {
             tokens.push_back(current_token);
             current_token = "";
