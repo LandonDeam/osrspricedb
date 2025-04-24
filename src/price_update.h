@@ -13,10 +13,10 @@ class price_update : public item {
     const uint64_t& buy_timestamp, const uint64_t& sell_timestamp);
   void update_buy(const int& buy, const uint64_t& timestamp);
   void update_sell(const int& sell, const uint64_t& timestamp);
-  int get_buy();
-  int get_sell();
-  uint64_t get_buy_timestamp();
-  uint64_t get_sell_timestamp();
+  const int& get_buy();
+  const int& get_sell();
+  const uint64_t& get_buy_timestamp();
+  const uint64_t& get_sell_timestamp();
  private:
   int buy;
   int sell;

@@ -39,7 +39,6 @@ class db_connection {
   static void connect_db();
   static void close();
 
-  // TODO(Landon Deam): Implement the following methods
   static void writeItemMap(
     const std::unordered_map<int, class item_map>& items);
   static void writePrices(const std::unordered_map<int,

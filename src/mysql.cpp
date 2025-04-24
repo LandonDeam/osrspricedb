@@ -7,6 +7,7 @@
 #include <string>
 #include <cstdlib>
 #include <memory>
+#include <unordered_map>
 #include "utils.h"
 
 // Evil pre-processor shenanigans for importing files as string literals
@@ -209,6 +210,44 @@ void db_connection::writeItemMap(
     sess->sql("COMMIT;").execute();
   } catch (std::exception& e) {
     std::cerr << "Error writing item map: " << e.what() << std::endl;
+    std::cout << "Last query: " << last_query << std::endl;
+    sess->sql("ROLLBACK;").execute();
+  }
+}
+
+void db_connection::writePrices(const std::unordered_map<int,
+  class price_update>& prices,
+uint64_t timestamp) {
+  sess->sql("START TRANSACTION;");
+  std::string last_query = "START TRANSACTION;";
+  try {
+    for (auto [id, item] : prices) {
+      std::string query = R"(REPLACE INTO osrs_market.price_update (ID, price_type, price, updated) VALUES ()";
+      query+=std::to_string(id)+", ";
+      query+="buy, ";
+      query+=std::to_string(item.get_buy())+", ";
+      query+=std::to_string(item.get_buy_timestamp())+");";
+      last_query = query;
+      sess->sql(query).execute();
+
+      query = R"(REPLACE INTO osrs_market.price_update (ID, price_type, price, updated) VALUES ()";
+      query+=std::to_string(id)+", ";
+      query+="sell, ";
+      query+=std::to_string(item.get_sell())+", ";
+      query+=std::to_string(item.get_sell_timestamp())+");";
+      last_query = query;
+      sess->sql(query).execute();
+
+      query = R"(REPLACE INTO osrs_market.price_series (ID, fetched, buy, sell) VALUES ()";
+      query+=std::to_string(id)+", ";
+      query+=std::to_string(timestamp)+", ";
+      query+=std::to_string(item.get_buy_timestamp())+", ";
+      query+=std::to_string(item.get_sell_timestamp())+");";
+      last_query = query;
+      sess->sql(query).execute();
+    }
+  } catch (std::exception& e) {
+    std::cerr << "Error writing prices: " << e.what() << std::endl;
     std::cout << "Last query: " << last_query << std::endl;
     sess->sql("ROLLBACK;").execute();
   }
