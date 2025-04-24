@@ -41,6 +41,8 @@ getter::getter(const std::string& str)
 void getter::get(const std::string& ep,
                  const std::string& debug,
                  const std::string& type) {
+  std::cout << "Attempting to get " << type << " data from " << ep
+    << std::endl;
   try {
     Poco::Net::HTTPResponse response;
     Poco::Net::HTTPRequest* request = generate_request(ep);

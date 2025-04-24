@@ -11,8 +11,8 @@ int main() {
   db_connection::init();
   db_connection::connect_db();
   getter p("https://prices.runescape.wiki");
-  p.get_prices();
   p.get_info();
+  p.get_prices();
   db_connection::close();
   return 0;
 }

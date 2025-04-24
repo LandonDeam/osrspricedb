@@ -12,6 +12,7 @@
 #include <cctype>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 #include <algorithm>
 #include "price_update.h"
 
@@ -133,12 +134,10 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
   utils::item_prices(const std::string& json) {
   std::unordered_map<int, price_update> items;
   const uint64_t timestamp = std::chrono::duration_cast<
-                              std::chrono::seconds>(
-                                std::chrono::system_clock::now()
-                                .time_since_epoch()
-                              )
-                              .count();
+    std::chrono::seconds>(std::chrono::system_clock::now()
+    .time_since_epoch()).count();
 
+  // std::cout << "Parsing item price JSON" << "\n";
   std::string parse = json;
   size_t start = parse.find("{\"data\":{");
   parse.erase(start, start+9);
@@ -146,25 +145,31 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
   parse.erase(end);
   std::vector<std::string> items_json =
     split_enclosed_inclusive(parse, ',', '{', '}');
+  // std::cout << "Iterating over items in JSON" << std::endl;
   for (const auto& item : items_json) {
     std::vector<std::string> id_kv =
       split_enclosed_exclusive(item, ':', '{', '}');
     std::string id = id_kv[0];
     erase_all(&id, '"');
+    // std::cout << "ID: " << id << std::endl;
     int ID = std::stoi(id);
     std::unordered_map<std::string, std::string> kv;
     std::vector<std::string> price_data =
-      split_enclosed_exclusive(id_kv[0], ',', '"');
+      split_enclosed_exclusive(id_kv[1], ',', '"');
+    // std::cout << "Parsing price data" << std::endl;
     for (const auto& data : price_data) {
+      // std::cout << "Parsing KV pair " << data << std::endl;
       std::vector<std::string> data_kv = split(data, ':');
       kv.insert_or_assign(data_kv[0], data_kv[1]);
     }
+    // std::cout << "Inserting data" << std::endl;
     items.insert_or_assign(ID, price_update(
       ID,
-      std::stoi(kv.at("low")),
-      std::stoi(kv.at("high")),
-      std::stoull(kv.at("lowTime")),
-      std::stoull(kv.at("highTime"))));
+      kv.at("low").compare("null") == 0 ? -1 : std::stoi(kv.at("low")),
+      kv.at("high").compare("null") == 0 ? -1 : std::stoi(kv.at("high")),
+      kv.at("lowTime").compare("null") == 0 ? 0 : std::stoull(kv.at("lowTime")),
+      kv.at("highTime").compare("null") == 0 ?
+        0 : std::stoull(kv.at("highTime"))));
   }
 
   return std::make_pair(items, timestamp);

@@ -176,6 +176,7 @@ void db_connection::build_table(const std::string& table_name,
 
 void db_connection::writeItemMap(
   const std::unordered_map<int, class item_map>& items) {
+  std::cout << "Writing item map... " << std::endl;
   sess->sql("START TRANSACTION;");
   std::string last_query = "START TRANSACTION;";
   try {
@@ -216,39 +217,63 @@ void db_connection::writeItemMap(
 }
 
 void db_connection::writePrices(const std::unordered_map<int,
-  class price_update>& prices,
-uint64_t timestamp) {
-  sess->sql("START TRANSACTION;");
-  std::string last_query = "START TRANSACTION;";
-  try {
-    for (auto [id, item] : prices) {
+  class price_update>& prices, uint64_t timestamp) {
+  std::cout << "Writing prices... " << std::endl;
+  std::string last_query;
+  for (auto [id, item] : prices) {
+    sess->sql("START TRANSACTION;");
+    last_query = "START TRANSACTION;";
+
+    try {
+      std::string test_query =
+        "SELECT ID FROM osrs_market.item_map WHERE ID = "
+        + std::to_string(id) + ";";
+      last_query = test_query;
+      auto res = sess->sql(test_query).execute();
+      if (!res.hasData()) {
+        continue;
+      } else if (res.count() == 0) {
+        continue;
+      }
+
       std::string query = R"(REPLACE INTO osrs_market.price_update (ID, price_type, price, updated) VALUES ()";
       query+=std::to_string(id)+", ";
-      query+="buy, ";
-      query+=std::to_string(item.get_buy())+", ";
-      query+=std::to_string(item.get_buy_timestamp())+");";
+      query+="\"buy\", ";
+      query+=item.get_buy() >= 0 ?
+        std::to_string(item.get_buy())+", " : "NULL, ";
+      query+=item.get_buy_timestamp() > 0 ?
+        "FROM_UNIXTIME("+std::to_string(item.get_buy_timestamp())+"));"
+        : "FROM_UNIXTIME(1361491200));";
       last_query = query;
       sess->sql(query).execute();
 
       query = R"(REPLACE INTO osrs_market.price_update (ID, price_type, price, updated) VALUES ()";
       query+=std::to_string(id)+", ";
-      query+="sell, ";
-      query+=std::to_string(item.get_sell())+", ";
-      query+=std::to_string(item.get_sell_timestamp())+");";
+      query+="\"sell\", ";
+      query+=item.get_sell() >= 0 ?
+        std::to_string(item.get_sell())+", " : "NULL, ";
+      query+=item.get_sell_timestamp() > 0 ?
+        "FROM_UNIXTIME("+std::to_string(item.get_sell_timestamp())+"));"
+        : "FROM_UNIXTIME(1361491200));";
       last_query = query;
       sess->sql(query).execute();
 
-      query = R"(REPLACE INTO osrs_market.price_series (ID, fetched, buy, sell) VALUES ()";
+      query = R"(REPLACE INTO osrs_market.price_series (ID, fetched, buy_updated, sell_updated) VALUES ()";
       query+=std::to_string(id)+", ";
-      query+=std::to_string(timestamp)+", ";
-      query+=std::to_string(item.get_buy_timestamp())+", ";
-      query+=std::to_string(item.get_sell_timestamp())+");";
+      query+="FROM_UNIXTIME("+std::to_string(timestamp)+"), ";
+      query+=item.get_buy_timestamp() > 0 ?
+        "FROM_UNIXTIME("+std::to_string(item.get_buy_timestamp())+"), "
+        : "FROM_UNIXTIME(1361491200), ";
+      query+=item.get_sell_timestamp() > 0 ?
+        "FROM_UNIXTIME("+std::to_string(item.get_sell_timestamp())+"));"
+        : "FROM_UNIXTIME(1361491200));";
       last_query = query;
       sess->sql(query).execute();
+      sess->sql("COMMIT;").execute();
+    } catch (std::exception& e) {
+      std::cerr << "Error writing prices: " << e.what() << std::endl;
+      std::cout << "Last query: " << last_query << std::endl;
+      sess->sql("ROLLBACK;").execute();
     }
-  } catch (std::exception& e) {
-    std::cerr << "Error writing prices: " << e.what() << std::endl;
-    std::cout << "Last query: " << last_query << std::endl;
-    sess->sql("ROLLBACK;").execute();
   }
 }

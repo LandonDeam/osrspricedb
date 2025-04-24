@@ -2,10 +2,10 @@ R""(
 CREATE TABLE IF NOT EXISTS osrs_market.price_update(
 ID MEDIUMINT NOT NULL,
 price_type CHAR(4) NOT NULL,
-price INT NOT NULL,
+price INT,
 updated TIMESTAMP(0) NOT NULL,
 
-FOREIGN KEY (ID) REFERENCES osrs_market.item_map(ID) ON UPDATE CASCADE,
+FOREIGN KEY (ID) REFERENCES osrs_market.item_map(ID) ON UPDATE CASCADE ON DELETE CASCADE,
 
 PRIMARY KEY (updated, ID, price_type)
 );
