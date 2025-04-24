@@ -7,6 +7,6 @@ updated TIMESTAMP(0) NOT NULL,
 
 FOREIGN KEY (ID) REFERENCES osrs_market.item_map(ID) ON UPDATE CASCADE,
 
-PRIMARY KEY (ID, price_type, updated)
+PRIMARY KEY (updated, ID, price_type)
 );
 )""
