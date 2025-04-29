@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.23)
 project(osrs_price_db CXX)
+set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG RELEASE)
 
 find_package(Poco REQUIRED)
 find_package(mysql-concpp REQUIRED)
