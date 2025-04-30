@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.23)
 project(osrs_price_db CXX)
 set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG RELEASE)
 
-find_package(Poco REQUIRED)
-find_package(mysql-concpp REQUIRED)
-find_package(RapidJSON CONFIG REQUIRED)
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
@@ -16,6 +13,10 @@ if(DOXYGEN_FOUND)
     )
 endif(DOXYGEN_FOUND)
 
+find_package(RapidJSON CONFIG REQUIRED)
+find_package(Poco REQUIRED)
+find_package(mysql-concpp REQUIRED)
+
 file(GLOB IMPLEMENTATIONS src/*.cpp)
 file(GLOB HEADERS src/*.h)
 file(GLOB SQL database/*.sql)
@@ -25,6 +26,6 @@ set(ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIG>/lib")
 set(LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIG>/lib")
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${IMPLEMENTATIONS} ${SQL})
-target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::XML Poco::JSON Poco::Util Poco::Net Poco::Crypto Poco::NetSSL mysql::concpp)
+target_link_libraries(${PROJECT_NAME} rapidjson Poco::Foundation Poco::XML Poco::JSON Poco::Util Poco::Net Poco::Crypto Poco::NetSSL mysql::concpp)
 
 # install(TARGETS osrs_price_db DESTINATION ".")
