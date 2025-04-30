@@ -6,7 +6,7 @@ set(CMAKE_EXPORT_NO_PACKAGE_REGISTRY ON)
 
 find_package(Poco REQUIRED)
 find_package(mysql-concpp REQUIRED)
-find_package(RapidJSON CONFIG REQUIRED)
+find_package(rapidjson CONFIG REQUIRED)
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
