@@ -4,7 +4,7 @@ set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG RELEASE)
 
 find_package(Poco REQUIRED)
 find_package(mysql-concpp REQUIRED)
-find_package(RapidJSON REQUIRED CONFIG)
+find_package(RapidJSON CONFIG REQUIRED)
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
