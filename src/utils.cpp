@@ -15,6 +15,7 @@
 #include <vector>
 #include <algorithm>
 #include "price_update.h"
+#include "rapidjson/document.h"
 
 /**
 * @brief URL-encodes a string.
@@ -84,7 +85,7 @@ std::string utils::readTextFile(const std::string& path) {
     std::stringstream buffer;
     buffer << file.rdbuf();
     return buffer.str();
-  } catch (std::exception e) {
+  } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
   }
 
@@ -94,38 +95,43 @@ std::string utils::readTextFile(const std::string& path) {
 const std::unordered_map<int, item_map>
   utils::item_maps(const std::string& json) {
   std::unordered_map<int, item_map> items;
-  std::vector<std::unordered_map<std::string, std::string>> raw =
-  json_arr_parse(json);
-  for (const auto& item : raw) {
-    int ID = std::stoi(item.at("id"));
-    std::string name = item.at("name");
-    std::string desc = item.at("examine");
-    std::string icon = item.at("icon");
-    int value = std::stoi(item.at("value"));
-    bool members = item.at("members").compare("true") == 0;
-    if (item.find("lowalch") == item.end()) {
-      if (item.find("limit") == item.end()) {
-        items.insert_or_assign(ID,
-          item_map(ID, name, desc, icon, members, value));
-      } else {
-        int limit = std::stoi(item.at("limit"));
-        items.insert_or_assign(ID,
-          item_map(ID, name, desc, icon, members, value, -1, -1, limit));
-      }
+  rapidjson::Document arr;
+  arr.Parse(json.c_str());
+  for (rapidjson::Value::ConstValueIterator itr = arr.Begin();
+      itr != arr.End();
+      ++itr) {
+    int ID, value, lowalch, highalch, limit;
+    std::string name, desc, icon;
+    bool members;
+
+    ID = (*itr)["id"].GetInt();
+    name = (*itr)["name"].GetString();
+    desc = (*itr)["examine"].GetString();
+    icon = (*itr)["icon"].GetString();
+    members = (*itr)["members"].GetBool();
+    if (itr->HasMember("value")) {
+      value = (*itr)["value"].GetInt();
     } else {
-      int lowalch = std::stoi(item.at("lowalch"));
-      int highalch = std::stoi(item.at("highalch"));
-      if (item.find("limit") == item.end()) {
-        items.insert_or_assign(ID,
-          item_map(ID, name, desc, icon,
-                              members, value, lowalch, highalch));
-      } else {
-        int limit = std::stoi(item.at("limit"));
-        items.insert_or_assign(ID,
-          item_map(ID, name, desc, icon, members, value,
-                              lowalch, highalch, limit));
-      }
+      value = -1;
     }
+    if (itr->HasMember("highalch")) {
+      highalch = (*itr)["highalch"].GetInt();
+    } else {
+      highalch = -1;
+    }
+    if (itr->HasMember("lowalch")) {
+      lowalch = (*itr)["lowalch"].GetInt();
+    } else {
+      lowalch = -1;
+    }
+    if (itr->HasMember("limit")) {
+      limit = (*itr)["limit"].GetInt();
+    } else {
+      limit = -1;
+    }
+
+    items.insert_or_assign(ID,
+      item_map(ID, name, desc, icon, members, value, lowalch, highalch, limit));
   }
   return items;
 }

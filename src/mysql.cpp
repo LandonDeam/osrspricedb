@@ -220,11 +220,10 @@ void db_connection::writePrices(const std::unordered_map<int,
   class price_update>& prices, uint64_t timestamp) {
   std::cout << "Writing prices... " << std::endl;
   std::string last_query;
-  for (auto [id, item] : prices) {
+  try {
     sess->sql("START TRANSACTION;");
     last_query = "START TRANSACTION;";
-
-    try {
+    for (auto [id, item] : prices) {
       std::string test_query =
         "SELECT ID FROM osrs_market.item_map WHERE ID = "
         + std::to_string(id) + ";";
@@ -270,10 +269,10 @@ void db_connection::writePrices(const std::unordered_map<int,
       last_query = query;
       sess->sql(query).execute();
       sess->sql("COMMIT;").execute();
-    } catch (std::exception& e) {
-      std::cerr << "Error writing prices: " << e.what() << std::endl;
-      std::cout << "Last query: " << last_query << std::endl;
-      sess->sql("ROLLBACK;").execute();
     }
+  } catch (std::exception& e) {
+    std::cerr << "Error writing prices: " << e.what() << std::endl;
+    std::cout << "Last query: " << last_query << std::endl;
+    sess->sql("ROLLBACK;").execute();
   }
 }

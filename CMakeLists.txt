@@ -4,6 +4,7 @@ set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG RELEASE)
 
 find_package(Poco REQUIRED)
 find_package(mysql-concpp REQUIRED)
+find_package(RapidJSON REQUIRED CONFIG)
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
@@ -24,6 +25,6 @@ set(ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIG>/lib")
 set(LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIG>/lib")
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${IMPLEMENTATIONS} ${SQL})
-target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::XML Poco::JSON Poco::Util Poco::Net Poco::Crypto Poco::NetSSL mysql::concpp)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::XML Poco::JSON Poco::Util Poco::Net Poco::Crypto Poco::NetSSL mysql::concpp rapidjson)
 
 # install(TARGETS osrs_price_db DESTINATION ".")
