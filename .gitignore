@@ -6,3 +6,4 @@ debug/*
 CMakeFiles
 CMakeCache.txt
 .env
+conan.lock
