@@ -143,42 +143,42 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
     std::chrono::seconds>(std::chrono::system_clock::now()
     .time_since_epoch()).count();
 
-  // std::cout << "Parsing item price JSON" << "\n";
-  std::string parse = json;
-  size_t start = parse.find("{\"data\":{");
-  parse.erase(start, start+9);
-  size_t end = parse.find_last_of("}}");
-  parse.erase(end);
-  std::vector<std::string> items_json =
-    split_enclosed_inclusive(parse, ',', '{', '}');
-  // std::cout << "Iterating over items in JSON" << std::endl;
-  for (const auto& item : items_json) {
-    std::vector<std::string> id_kv =
-      split_enclosed_exclusive(item, ':', '{', '}');
-    std::string id = id_kv[0];
-    erase_all(&id, '"');
-    // std::cout << "ID: " << id << std::endl;
-    int ID = std::stoi(id);
-    std::unordered_map<std::string, std::string> kv;
-    std::vector<std::string> price_data =
-      split_enclosed_exclusive(id_kv[1], ',', '"');
-    // std::cout << "Parsing price data" << std::endl;
-    for (const auto& data : price_data) {
-      // std::cout << "Parsing KV pair " << data << std::endl;
-      std::vector<std::string> data_kv = split(data, ':');
-      kv.insert_or_assign(data_kv[0], data_kv[1]);
-    }
-    // std::cout << "Inserting data" << std::endl;
+  rapidjson::Document parse;
+  parse.Parse(json.c_str());
+
+  rapidjson::Document data;
+  data.Parse(parse["data"].GetString());
+  for (auto& item : data.GetObject()) {
+    int ID = item.name.GetInt();
+    rapidjson::Document item_data;
+    item_data.Parse(item.value.GetString());
     items.insert_or_assign(ID, price_update(
       ID,
-      kv.at("low").compare("null") == 0 ? -1 : std::stoi(kv.at("low")),
-      kv.at("high").compare("null") == 0 ? -1 : std::stoi(kv.at("high")),
-      kv.at("lowTime").compare("null") == 0 ? 0 : std::stoull(kv.at("lowTime")),
-      kv.at("highTime").compare("null") == 0 ?
-        0 : std::stoull(kv.at("highTime"))));
+      GetIntFromStringIfNot(item_data["low"].GetString(), "null"),
+      GetIntFromStringIfNot(item_data["high"].GetString(), "null"),
+      GetUInt64FromStringIfNot(item_data["lowTime"].GetString(), "null"),
+      GetUInt64FromStringIfNot(item_data["highTime"].GetString(), "null")));
   }
 
   return std::make_pair(items, timestamp);
+}
+
+const int utils::GetIntFromStringIfNot(const std::string& str,
+  const std::string& not_str, const int& ordinal) {
+    if (str.compare("not_str") == 0) {
+      return ordinal;
+    } else {
+      return std::stoi(str);
+    }
+}
+
+const uint64_t utils::GetUInt64FromStringIfNot(const std::string& str,
+  const std::string& not_str, const uint64_t& ordinal) {
+    if (str.compare("not_str") == 0) {
+      return ordinal;
+    } else {
+      return std::stoull(str);
+    }
 }
 
 const std::vector<std::unordered_map<std::string, std::string>>

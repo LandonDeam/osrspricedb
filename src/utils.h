@@ -35,6 +35,10 @@ class utils {
   static std::vector<std::string> split_enclosed_exclusive(const std::string& s,
     char delimiter, char start_enclosure,
     char end_enclosure);
+  static const inline int GetIntFromStringIfNot(const std::string& str,
+    const std::string& not_str, const int& ordinal = -1);
+  static const inline uint64_t GetUInt64FromStringIfNot(const std::string& str,
+    const std::string& not_str, const uint64_t& ordinal = 0);
 };
 
 #endif  // UTILS_H_
