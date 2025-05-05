@@ -13,13 +13,6 @@ if(DOXYGEN_FOUND)
     )
 endif(DOXYGEN_FOUND)
 
-find_package(RapidJSON CONFIG REQUIRED)
-if (RapidJSON_FOUND)
-    message(STATUS "RapidJSON_DIR: ${RapidJSON_DIR}")
-    if ("${RapidJSON_DIR}" MATCHES ".conan")
-    message(STATUS "RapidJSON is from Conan")
-    endif()
-endif()
 
 find_package(Poco REQUIRED)
 find_package(mysql-concpp REQUIRED)
@@ -33,6 +26,7 @@ set(ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIG>/lib")
 set(LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIG>/lib")
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${IMPLEMENTATIONS} ${SQL})
-target_link_libraries(${PROJECT_NAME} PUBLIC rapidjson Poco::Foundation Poco::XML Poco::JSON Poco::Util Poco::Net Poco::Crypto Poco::NetSSL mysql::concpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC Poco::Foundation Poco::XML Poco::JSON Poco::Util Poco::Net Poco::Crypto Poco::NetSSL mysql::concpp)
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_BINARY_DIR}/generators")
 
 # install(TARGETS osrs_price_db DESTINATION ".")

@@ -25,8 +25,8 @@ class osrs_price_dbRecipe(ConanFile):
         self.folders.build = "build"
 
     def requirements(self):
-        self.requires("rapidjson/1.1.0")
-        self.requires("mysql-connector-cpp/9.2.0")
+        self.requires("rapidjson/cci.20230929", override=True)
+        self.requires("mysql-connector-cpp/9.2.0", override=True)
         self.requires("poco/1.13.3")
         self.requires("doxygen/1.13.2")
 
