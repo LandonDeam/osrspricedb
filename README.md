@@ -13,3 +13,5 @@
 ## Build
 
 Build the project: `conan build . --build=missing -o:b "!cmake/*: cmake/[>=3 <4]" -s build_type=Release`
+
+(Note: If Conan has fixed their issue with CMake 4 recipes, you should be able to omit the `-o:b "!cmake/*: cmake/[>=3 <4]"` portion)
