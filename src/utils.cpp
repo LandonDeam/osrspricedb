@@ -151,10 +151,10 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
     int ID = std::stoi(p.name.GetString());
 
     auto const& item_data = p.value.GetObject();
-    const auto& low = item_data.FindMember("low")->value;
-    const auto& high = item_data.FindMember("high")->value;
-    const auto& lowTime = item_data.FindMember("lowTime")->value;
-    const auto& highTime = item_data.FindMember("highTime")->value;
+    const auto& low = item_data["low"];
+    const auto& high = item_data["high"];
+    const auto& lowTime = item_data["lowTime"];
+    const auto& highTime = item_data["highTime"];
 
     items.insert_or_assign(ID, price_update(
       ID,
