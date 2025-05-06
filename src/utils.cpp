@@ -145,19 +145,23 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
 
   rapidjson::Document parse;
   parse.Parse(json.c_str());
+  const rapidjson::Value& data = parse["data"];
 
-  rapidjson::Document data;
-  data.Parse(parse["data"].GetString());
-  for (auto& item : data.GetObject()) {
-    int ID = item.name.GetInt();
-    rapidjson::Document item_data;
-    item_data.Parse(item.value.GetString());
+  for (auto const& p : parse["data"].GetObject()) {
+    int ID = std::stoi(p.name.GetString());
+
+    auto const& item_data = p.value.GetObject();
+    const auto& low = item_data.FindMember("low")->value;
+    const auto& high = item_data.FindMember("high")->value;
+    const auto& lowTime = item_data.FindMember("lowTime")->value;
+    const auto& highTime = item_data.FindMember("highTime")->value;
+
     items.insert_or_assign(ID, price_update(
       ID,
-      GetIntFromStringIfNot(item_data["low"].GetString(), "null"),
-      GetIntFromStringIfNot(item_data["high"].GetString(), "null"),
-      GetUInt64FromStringIfNot(item_data["lowTime"].GetString(), "null"),
-      GetUInt64FromStringIfNot(item_data["highTime"].GetString(), "null")));
+      low.IsInt() ? low.GetInt() : -1,
+      high.IsInt() ? high.GetInt() : -1,
+      lowTime.IsInt64() ? lowTime.GetInt64() : 0,
+      highTime.IsInt64() ? highTime.GetInt64() : 0));
   }
 
   return std::make_pair(items, timestamp);

@@ -70,7 +70,9 @@ void getter::get(const std::string& ep,
     }
     responseFile.close();
   } catch (Poco::Exception& e) {
-    std::cerr << e.displayText() << std::endl;
+    std::cerr << e.what() << std::endl;
+  } catch (std::exception& e) {
+    std::cerr << e.what() << std::endl;
   }
 }
 
