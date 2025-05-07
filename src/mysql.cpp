@@ -23,6 +23,10 @@ const char* item_map_sql =
   #include "../database/create_item_map.sql"
 ;
 
+const char* item_source_sql =
+  #include "../database/create_item_source.sql"
+;
+
 const char* schema_sql =
   #include "../database/create_db.sql"
 ;
@@ -142,6 +146,13 @@ void db_connection::build_price_update() {
 */
 void db_connection::build_item_map() {
   build_table("item map", item_map_sql);
+}
+
+/**
+* @brief Builds the item source table.
+*/
+void db_connection::build_item_source() {
+  build_table("item source", item_source_sql);
 }
 
 /**
@@ -274,5 +285,20 @@ void db_connection::writePrices(const std::unordered_map<int,
     std::cerr << "Error writing prices: " << e.what() << std::endl;
     std::cout << "Last query: " << last_query << std::endl;
     sess->sql("ROLLBACK;").execute();
+  }
+}
+
+void db_connection::writeItemSources(
+  const std::unordered_map<int, class item_source>& sources) {
+  std::cout << "Writing sources... " << std::endl;
+  std::string last_query;
+  try {
+    sess->sql("START TRANSACTION;");
+    last_query = "START TRANSACTION;";
+    sess->sql("COMMIT;").execute();
+  } catch (std::exception& e) {
+  std::cerr << "Error writing sources: " << e.what() << std::endl;
+  std::cout << "Last query: " << last_query << std::endl;
+  sess->sql("ROLLBACK;").execute();
   }
 }
