@@ -45,7 +45,7 @@ class db_connection {
   static void writePrices(const std::unordered_map<int,
                             class price_update>& prices,
                           uint64_t timestamp);
-  static void writeItemSource(
+  static void writeItemSources(
     const std::unordered_map<int, class item_source>& sources);
 };
 
