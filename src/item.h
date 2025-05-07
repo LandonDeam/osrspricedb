@@ -7,7 +7,7 @@
 class item {
  public:
   explicit item(int ID);
-  const int& getID() {return ID;}
+  const int& getID() const {return ID;}
 
  private:
   int ID;

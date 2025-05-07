@@ -191,7 +191,7 @@ void db_connection::writeItemMap(
   sess->sql("START TRANSACTION;");
   std::string last_query = "START TRANSACTION;";
   try {
-    for (auto [ID, item] : items) {
+    for (const auto& [ID, item] : items) {
       std::string query = R"(REPLACE INTO osrs_market.item_map (ID, item_name, icon, examine, members, item_value, lowalch, highalch, ge_limit) VALUES ()";
       query+=std::to_string(item.getID())+", ";
       query+="\""+item.getName()+"\", ";
@@ -234,7 +234,7 @@ void db_connection::writePrices(const std::unordered_map<int,
   try {
     sess->sql("START TRANSACTION;");
     last_query = "START TRANSACTION;";
-    for (auto [id, item] : prices) {
+    for (const auto& [id, item] : prices) {
       std::string test_query =
         "SELECT ID FROM osrs_market.item_map WHERE ID = "
         + std::to_string(id) + ";";

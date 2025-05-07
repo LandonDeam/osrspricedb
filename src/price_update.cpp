@@ -35,35 +35,3 @@ void price_update::update_sell(const int& sell, const uint64_t& timestamp) {
   this->sell = sell;
   this->sell_timestamp = timestamp;
 }
-
-/**
-* @brief Returns the buy price.
-* @return The buy price.
-*/
-const int& price_update::get_buy() {
-  return this->buy;
-}
-
-/**
-* @brief Returns the sell price.
-* @return The sell price.
-*/
-const int& price_update::get_sell() {
-  return this->sell;
-}
-
-/**
-* @brief Returns the buy timestamp.
-* @return The timestamp.
-*/
-const uint64_t& price_update::get_buy_timestamp() {
-  return this->buy_timestamp;
-}
-
-/**
-* @brief Returns the sell timestamp.
-* @return The timestamp.
-*/
-const uint64_t& price_update::get_sell_timestamp() {
-  return this->sell_timestamp;
-}
