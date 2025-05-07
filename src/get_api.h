@@ -16,6 +16,7 @@ class getter {
   explicit getter(const std::string& str);
   void get_prices();
   void get_info();
+  void get_sources();
  private:
   void get(const std::string& ep,
            const std::string& debug,

@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include "price_update.h"
 #include "item_map.h"
+#include "item_source.h"
 
 class db_connection {
  private:
@@ -44,6 +45,8 @@ class db_connection {
   static void writePrices(const std::unordered_map<int,
                             class price_update>& prices,
                           uint64_t timestamp);
+  static void writeItemSource(
+    const std::unordered_map<int, class item_source>& sources);
 };
 
 #endif  // MYSQL_H_
