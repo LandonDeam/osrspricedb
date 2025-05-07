@@ -15,3 +15,14 @@
 Build the project: `conan build . --build=missing -o:b "!cmake/*: cmake/[>=3 <4]" -s build_type=Release`
 
 (Note: If Conan has fixed their issue with CMake 4 recipes, you should be able to omit the `-o:b "!cmake/*: cmake/[>=3 <4]"` portion)
+
+## Running
+
+The following environment variables (preferably in a `.env` file) are required to connect to your MySQL server:
+
+```.env
+MYSQL_USERNAME=username
+MYSQL_PASSWORD=password
+MYSQL_PORT=33060
+MYSQL_HOST=localhost
+```
