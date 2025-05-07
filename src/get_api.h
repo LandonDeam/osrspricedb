@@ -5,10 +5,12 @@
 #define GET_PRICES_H_
 
 #include <string>
+#include <unordered_map>
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPSClientSession.h"
 #include "Poco/URI.h"
+#include "item_map.h"
 
 class getter {
  public:
@@ -24,6 +26,7 @@ class getter {
   Poco::Net::HTTPSClientSession client;
   Poco::Net::HTTPRequest* generate_request(const std::string& ep);
   void new_connection(Poco::URI uri);
+  static std::unordered_map<int, item_map> map;
 };
 
 #endif  // GET_PRICES_H_
