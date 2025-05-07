@@ -17,35 +17,3 @@ item_source::item_source(const int& ID, const std::string& source,
   this->chance_max = chance_max;
   this->rolls = rolls;
 }
-
-const std::string& item_source::GetSource() {
-  return source;
-}
-
-const bool& item_source::IsNoted() {
-  return noted;
-}
-
-const std::string& item_source::GetSkill() {
-  return skill;
-}
-
-const int& item_source::GetQuantityMin() {
-  return quantity_min;
-}
-
-const int& item_source::GetQuantityMax() {
-  return quantity_max;
-}
-
-const float& item_source::GetChanceMin() {
-  return chance_min;
-}
-
-const float& item_source::GetChanceMax() {
-  return chance_max;
-}
-
-const int& item_source::GetRolls() {
-  return rolls;
-}

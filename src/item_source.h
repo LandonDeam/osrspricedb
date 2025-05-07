@@ -15,14 +15,14 @@ class item_source : item {
     const float& chance_min, const float& chance_max,
     const int& rolls);
 
-  const std::string& GetSource();
-  const bool& IsNoted();
-  const std::string& GetSkill();
-  const int& GetQuantityMin();
-  const int& GetQuantityMax();
-  const float& GetChanceMin();
-  const float& GetChanceMax();
-  const int& GetRolls();
+  const std::string& GetSource() const {return source;}
+  const bool& IsNoted() const {return noted;}
+  const std::string& GetSkill() const {return skill;}
+  const int& GetQuantityMin() const {return quantity_min;}
+  const int& GetQuantityMax() const {return quantity_max;}
+  const float& GetChanceMin() const {return chance_min;}
+  const float& GetChanceMax() const {return chance_max;}
+  const int& GetRolls() const {return rolls;}
 
  private:
   std::string source;
