@@ -18,12 +18,12 @@ class utils {
   static std::string urlEncode(const std::string& input);
   static void makeFolderIfNotExists(const std::string& path);
   static std::string readTextFile(const std::string& path);
-  static const std::unordered_map<int, item_map>
-    item_maps(const std::string& json);
+  static const std::unordered_map<int, item_map> item_maps(
+    const std::string& json);
   static const std::pair<std::unordered_map<int, price_update>, uint64_t>
     item_prices(const std::string& json);
-  static const std::unordered_map<int, item_source>
-    item_sources(const std::string& json);
+  static const std::unordered_map<int, item_source> item_sources(
+    const std::string& json);
   static const std::vector<std::unordered_map<std::string, std::string>>
     json_arr_parse(const std::string& input);
   static void erase_all(std::string* str, char c);

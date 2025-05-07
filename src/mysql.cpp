@@ -114,6 +114,13 @@ void db_connection::connect_tables() {
     build_price_series();  // Create price_series table if it doesn't exist
   }
   std::cout << "Price series table connected." << std::endl;
+
+  item_source =
+      std::make_shared<mysqlx::Table>(db->getTable("item_source"));
+  if (!item_source->existsInDatabase()) {
+    build_item_source();  // Create item_map table if it doesn't exist
+  }
+  std::cout << "Item source table connected." << std::endl;
 }
 
 /**

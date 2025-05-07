@@ -26,6 +26,7 @@ class db_connection {
   inline static std::shared_ptr<mysqlx::Table> price_series;
   inline static std::shared_ptr<mysqlx::Table> price_update;
   inline static std::shared_ptr<mysqlx::Table> item_map;
+  inline static std::shared_ptr<mysqlx::Table> item_source;
 
   static void connect_tables();
   static void build_schema();

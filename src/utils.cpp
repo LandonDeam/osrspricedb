@@ -92,8 +92,8 @@ std::string utils::readTextFile(const std::string& path) {
   return nullptr;
 }
 
-const std::unordered_map<int, item_map>
-  utils::item_maps(const std::string& json) {
+const std::unordered_map<int, item_map> utils::item_maps(
+  const std::string& json) {
   std::unordered_map<int, item_map> items;
   rapidjson::Document arr;
   arr.Parse(json.c_str());
@@ -165,6 +165,13 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
   }
 
   return std::make_pair(items, timestamp);
+}
+
+const std::unordered_map<int, item_source> utils::item_sources(
+  const std::string& json) {
+  std::unordered_map<int, item_source> items;
+
+  return items;
 }
 
 const int utils::GetIntFromStringIfNot(const std::string& str,

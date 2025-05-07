@@ -128,3 +128,6 @@ void getter::new_connection(Poco::URI uri) {
     uri.getPort(),
     ptrContext);
 }
+
+void getter::get_sources() {
+}
