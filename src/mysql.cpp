@@ -242,7 +242,7 @@ void db_connection::writeItemMap(
 
 void db_connection::writePrices(const std::unordered_map<int,
   class price_update>& prices, uint64_t timestamp) {
-  std::cout << "Writing prices... " << std::endl;
+  std::cout << "Writing prices...                               " << std::endl;
   std::string last_query;
   try {
     sess->sql("START TRANSACTION;");

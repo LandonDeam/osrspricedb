@@ -98,7 +98,7 @@ void getter::get_prices() {
 * @brief Gets all item info
 */
 void getter::get_info() {
-  std::cout << "Attempting to get item data from /api/v1/osrs/mapping/"
+  std::cout << "Attempting to get item data from /api/v1/osrs/mapping/        "
     << std::endl;
   this->get("/api/v1/osrs/mapping/", "debug/mapping.json", "info");
 }
@@ -118,12 +118,15 @@ void getter::get_sources() {
             R"({{{{Drop sources|{}|limit=100000|incrdt=y}}}})",
             item.getName())),
         utils::urlEncode(item.getName()));
+      std::cout << "Attempting to get " << std::setw(6) << ID
+        << " " << item.getName()<< "                         \r" << std::flush;
       get(endpoint, std::format("debug/sources/{}.json", ID), "source");
     }
     db_connection::writeItemSources(all_sources);
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
   }
+  std::cout << "Finished getting sources.                       " << std::endl;
 }
 
 /**
@@ -178,6 +181,7 @@ void getter::manage_sources(getter* g) {
 void getter::manage_prices(getter* g) {
   while (true) {
     g->get_prices();
+    std::cout << "Successfully wrote prices.                    " << std::endl;
     sleep(60);  // 1 minute
   }
 }
