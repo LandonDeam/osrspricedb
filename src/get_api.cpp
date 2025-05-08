@@ -1,4 +1,4 @@
-// Copyright Landon Deam 2024
+// Copyright Landon Deam 2025
 
 #include "get_api.h"
 #include <format>
@@ -166,6 +166,10 @@ void getter::new_connection(Poco::URI uri) {
     ptrContext);
 }
 
+/**
+* @brief Manages gathering item sources at a 24 hour interval
+* @param g pointer to a `getter` object that is set up to pull data
+*/
 void getter::manage_sources(getter* g) {
   if (map.size() == 0) {
     std::cout << "No items to look for sources from." << std::endl;
@@ -178,6 +182,10 @@ void getter::manage_sources(getter* g) {
   }
 }
 
+/**
+* @brief Manages gathering price data at a 1 minute interval
+* @param g pointer to a `getter` object that is set up to pull data
+*/
 void getter::manage_prices(getter* g) {
   while (true) {
     g->get_prices();

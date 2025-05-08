@@ -1,4 +1,4 @@
-// Copyright 2025 Landon Deam
+// Copyright Landon Deam 2025
 
 #include "env.h"
 #include <stdlib.h>

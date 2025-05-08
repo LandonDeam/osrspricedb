@@ -1,4 +1,4 @@
-// Copyright Landon Deam 2024
+// Copyright Landon Deam 2025
 
 #pragma once
 #ifndef ITEM_H_
@@ -7,6 +7,7 @@
 class item {
  public:
   explicit item(int ID);
+
   const int& getID() const {return ID;}
 
  private:

@@ -1,4 +1,4 @@
-// Copyright Landon Deam 2024
+// Copyright Landon Deam 2025
 
 #pragma once
 #ifndef MAIN_H_

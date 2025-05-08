@@ -1,11 +1,11 @@
-// Copyright 2025 Landon Deam
+// Copyright Landon Deam 2025
 
 #pragma once
-#include <cstdint>
 #ifndef MYSQL_H_
 #define MYSQL_H_
 
 #include <mysqlx/xdevapi.h>
+#include <cstdint>
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -35,6 +35,7 @@ class db_connection {
   static void build_price_update();
   static void build_item_map();
   static void build_item_source();
+
   static void build_table(const std::string& table_name,
     const std::string& create_command);
 
@@ -45,9 +46,11 @@ class db_connection {
 
   static void writeItemMap(
     const std::unordered_map<int, class item_map>& items);
+
   static void writePrices(const std::unordered_map<int,
                             class price_update>& prices,
                           uint64_t timestamp);
+
   static void writeItemSources(
     const std::unordered_map<int, std::vector<class item_source>>& sources);
 };

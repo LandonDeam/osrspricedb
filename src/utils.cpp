@@ -1,4 +1,4 @@
-// Copyright 2025 Landon Deam
+// Copyright Landon Deam 2025
 
 #include "utils.h"
 #include <chrono>
@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <algorithm>
 #include "price_update.h"
 #include "rapidjson/document.h"
 
@@ -92,6 +91,11 @@ std::string utils::readTextFile(const std::string& path) {
   return nullptr;
 }
 
+/**
+* @brief Takes a JSON response and parses it into an item map
+* @param json The JSON response to parse
+* @return An unordered map of item IDs to their corresponding item mappings
+*/
 const std::unordered_map<int, item_map> utils::item_maps(
   const std::string& json) {
   std::unordered_map<int, item_map> items;
@@ -136,6 +140,11 @@ const std::unordered_map<int, item_map> utils::item_maps(
   return items;
 }
 
+/**
+* @brief Takes a JSON response and parses it into item prices
+* @param json The JSON response to parse
+* @return An unordered map of item IDs to their corresponding price information
+*/
 const std::pair<std::unordered_map<int, price_update>, uint64_t>
   utils::item_prices(const std::string& json) {
   std::unordered_map<int, price_update> items;
@@ -167,162 +176,14 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
   return std::make_pair(items, timestamp);
 }
 
+/**
+* @brief Takes a JSON response and parses it into a list of drop sources
+* @param json The JSON response to parse
+* @return A vector containing all of the drop sources of a given item
+*/
 const std::vector<item_source> utils::item_sources(
   const std::string& json) {
   std::vector<item_source> items;
 
   return items;
-}
-
-const int utils::GetIntFromStringIfNot(const std::string& str,
-  const std::string& not_str, const int& ordinal) {
-    if (str.compare("not_str") == 0) {
-      return ordinal;
-    } else {
-      return std::stoi(str);
-    }
-}
-
-const uint64_t utils::GetUInt64FromStringIfNot(const std::string& str,
-  const std::string& not_str, const uint64_t& ordinal) {
-    if (str.compare("not_str") == 0) {
-      return ordinal;
-    } else {
-      return std::stoull(str);
-    }
-}
-
-const std::vector<std::unordered_map<std::string, std::string>>
-  utils::json_arr_parse(const std::string& input) {
-  std::vector<std::unordered_map<std::string, std::string>> arr;
-  std::string parse = input;
-  erase_all(&parse, '[');
-  erase_all(&parse, ']');
-  std::vector<std::string> tokens = split(parse, '}');
-  for (auto token : tokens) {
-    erase_all(&token, '{');
-    if (token.compare("") == 0) {
-      continue;
-    }
-    std::unordered_map<std::string, std::string> data;
-    std::vector<std::string> kv_pairs =
-      split_enclosed_inclusive(token, ',', '"');
-    for (auto kv_pair : kv_pairs) {
-      if (kv_pair.compare("") == 0) {
-        continue;
-      }
-      std::vector<std::string> kv = split_enclosed_exclusive(kv_pair, ':', '"');
-      if (kv.size() != 2) {
-        continue;
-      }
-      data.insert_or_assign(kv[0], kv[1]);
-    }
-    arr.push_back(data);
-  }
-  return arr;
-}
-
-void utils::erase_all(std::string* str, char c) {
-  str->erase(std::remove(str->begin(), str->end(), c), str->end());
-}
-
-std::vector<std::string> utils::split(const std::string &s, char delim) {
-  std::vector<std::string> result;
-  std::stringstream ss(s);
-  std::string item;
-
-  while (getline(ss, item, delim)) {
-      result.push_back(item);
-  }
-
-  return result;
-}
-
-std::vector<std::string> utils::split_enclosed_inclusive(const std::string& s,
-                                        char delimiter, char enclosure) {
-    std::vector<std::string> tokens;
-    std::string current_token;
-    bool inside_enclosure = false;
-
-    for (char c : s) {
-        if (c == enclosure) {
-            inside_enclosure = !inside_enclosure;
-            current_token += c;
-        } else if (c == delimiter && !inside_enclosure) {
-            tokens.push_back(current_token);
-            current_token = "";
-        } else {
-            current_token += c;
-        }
-    }
-    tokens.push_back(current_token);
-    return tokens;
-}
-
-std::vector<std::string> utils::split_enclosed_inclusive(const std::string& s,
-                                        char delimiter, char start_enclosure,
-                                        char end_enclosure) {
-    std::vector<std::string> tokens;
-    std::string current_token;
-    bool inside_enclosure = false;
-
-    for (char c : s) {
-        if (c == start_enclosure) {
-            inside_enclosure = true;
-            current_token += c;
-        } else if (c == end_enclosure) {
-            inside_enclosure = false;
-            current_token += c;
-        } else if (c == delimiter && !inside_enclosure) {
-            tokens.push_back(current_token);
-            current_token = "";
-        } else {
-            current_token += c;
-        }
-    }
-    tokens.push_back(current_token);
-    return tokens;
-}
-
-std::vector<std::string> utils::split_enclosed_exclusive(const std::string& s,
-                                        char delimiter, char enclosure) {
-    std::vector<std::string> tokens;
-    std::string current_token;
-    bool inside_enclosure = false;
-
-    for (char c : s) {
-        if (c == enclosure) {
-            inside_enclosure = !inside_enclosure;
-        } else if (c == delimiter && !inside_enclosure) {
-            tokens.push_back(current_token);
-            current_token = "";
-        } else {
-            current_token += c;
-        }
-    }
-    tokens.push_back(current_token);
-    return tokens;
-}
-
-std::vector<std::string> utils::split_enclosed_exclusive(const std::string& s,
-                                        char delimiter, char start_enclosure,
-                                        char end_enclosure) {
-    std::vector<std::string> tokens;
-    std::string current_token;
-    bool inside_enclosure = false;
-
-    for (char c : s) {
-        if (c == start_enclosure && !inside_enclosure) {
-            inside_enclosure = true;
-        } else if (c == end_enclosure && inside_enclosure) {
-            inside_enclosure = false;
-        } else if (c == delimiter && !inside_enclosure) {
-            tokens.push_back(current_token);
-            current_token = "";
-        } else {
-            current_token += c;
-        }
-    }
-    tokens.push_back(current_token);
-    return tokens;
 }

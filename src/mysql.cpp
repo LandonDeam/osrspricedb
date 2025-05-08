@@ -1,4 +1,4 @@
-// Copyright 2025 Landon Deam
+// Copyright Landon Deam 2025
 
 #include "mysql.h"
 #include <mysqlx/devapi/common.h>
@@ -198,6 +198,10 @@ void db_connection::build_table(const std::string& table_name,
   }
 }
 
+/**
+* @brief Writes a given item map into the MySQL database
+* @param items Unordered map of item IDs and their corresponding mappings
+*/
 void db_connection::writeItemMap(
   const std::unordered_map<int, class item_map>& items) {
   std::cout << "Writing item map... " << std::endl;
@@ -240,6 +244,12 @@ void db_connection::writeItemMap(
   }
 }
 
+/**
+* @brief Writes item prices into the MySQL database
+* @param prices Unordered map of item IDs and their corresponding prices
+* @param timestamp Timestamp in Unix seconds to save to database as "fetched"
+* time
+*/
 void db_connection::writePrices(const std::unordered_map<int,
   class price_update>& prices, uint64_t timestamp) {
   std::cout << "Writing prices...                               " << std::endl;
@@ -301,6 +311,11 @@ void db_connection::writePrices(const std::unordered_map<int,
   }
 }
 
+/**
+* @brief Writes item drop sources into the MySQL database
+* @param sources Unordered map of item IDs and their corresponding lists of
+* drop sources.
+*/
 void db_connection::writeItemSources(
   const std::unordered_map<int, std::vector<class item_source>>& sources) {
   std::cout << "Writing sources... " << std::endl;
