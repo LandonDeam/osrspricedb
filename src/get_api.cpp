@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPSClientSession.h"
@@ -44,8 +45,6 @@ getter::getter(const std::string& str)
 void getter::get(const std::string& ep,
                  const std::string& debug,
                  const std::string& type) {
-  std::cout << "Attempting to get " << type << " data from " << ep
-    << std::endl;
   try {
     Poco::Net::HTTPResponse response;
     Poco::Net::HTTPRequest* request = generate_request(ep);
@@ -90,6 +89,8 @@ void getter::get(const std::string& ep,
 * @brief Gets all of the prices
 */
 void getter::get_prices() {
+  std::cout << "Attempting to get price data from /api/v1/osrs/latest/"
+    << std::endl;
   this->get("/api/v1/osrs/latest/", "debug/prices.json", "price");
 }
 
@@ -97,6 +98,8 @@ void getter::get_prices() {
 * @brief Gets all item info
 */
 void getter::get_info() {
+  std::cout << "Attempting to get item data from /api/v1/osrs/mapping/"
+    << std::endl;
   this->get("/api/v1/osrs/mapping/", "debug/mapping.json", "info");
 }
 
@@ -104,6 +107,8 @@ void getter::get_info() {
 * @brief Gets all item sources
 */
 void getter::get_sources() {
+  std::cout << "Attempting to get item drops data from "
+    << "MediaWiki endpoint /api.php" << std::endl;
   try {
     for (const auto& [ID, item] : map) {
       std::string endpoint = std::format(
@@ -156,4 +161,23 @@ void getter::new_connection(Poco::URI uri) {
     uri.getHost(),
     uri.getPort(),
     ptrContext);
+}
+
+void getter::manage_sources(getter* g) {
+  if (map.size() == 0) {
+    std::cout << "No items to look for sources from." << std::endl;
+    return;
+  }
+
+  while (true) {
+    g->get_sources();
+    sleep(60 * 60 * 24);  // 24 hours
+  }
+}
+
+void getter::manage_prices(getter* g) {
+  while (true) {
+    g->get_prices();
+    sleep(60);  // 1 minute
+  }
 }

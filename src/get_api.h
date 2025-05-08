@@ -17,10 +17,10 @@ class getter {
   explicit getter(Poco::URI uri);
   explicit getter(const std::string& str);
   void get_prices();
-  static void manage_prices(const getter& g);
+  static void manage_prices(getter* g);
   void get_info();
   void get_sources();
-  static void manage_sources(const getter& g);
+  static void manage_sources(getter* g);
  private:
   void get(const std::string& ep,
            const std::string& debug,
