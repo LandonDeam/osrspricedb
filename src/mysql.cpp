@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 #include "utils.h"
 
 // Evil pre-processor shenanigans for importing files as string literals
@@ -61,6 +62,11 @@ void db_connection::init() {
 * @brief Close the database connection.
 */
 void db_connection::close() {
+  if (initialized == false) {
+    std::cout << "Session is not open." << std::endl;
+    return;
+  }
+
   try {
     std::cout << "Attempting to close session..." << std::endl;
     sess->close();
