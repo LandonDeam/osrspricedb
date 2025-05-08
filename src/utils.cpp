@@ -15,6 +15,7 @@
 #include <vector>
 #include "price_update.h"
 #include "rapidjson/document.h"
+#include "gumbo.h"
 
 /**
 * @brief URL-encodes a string.
@@ -154,7 +155,6 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
 
   rapidjson::Document parse;
   parse.Parse(json.c_str());
-  const rapidjson::Value& data = parse["data"];
 
   for (auto const& p : parse["data"].GetObject()) {
     int ID = std::stoi(p.name.GetString());
@@ -185,5 +185,42 @@ const std::vector<item_source> utils::item_sources(
   const std::string& json) {
   std::vector<item_source> items;
   // TODO(LandonDeam): Actually parse the JSON (and subsequent HTML) response
+
+  rapidjson::Document parse;
+  parse.Parse(json.c_str());
+
+  if (!parse.HasMember("parse")) {
+    return items;
+  }
+
+  const auto& parse_obj = parse["parse"].GetObject();
+
+  if (!parse_obj.HasMember("text")) {
+    return items;
+  }
+
+  const auto& text_obj = parse_obj["text"].GetObject();
+
+  if (!text_obj.HasMember("*")) {
+    return items;
+  }
+
+  const auto& html_obj = text_obj["*"];
+
+  if (!html_obj.IsString()) {
+    return items;
+  }
+
+  const auto& html = html_obj.GetString();
+
+  std::string no_drops = R"(<div class=\"mw-parser-output\"><dl><dd><i>No drop sources found.)";
+
+  if (std::string(html).starts_with(no_drops)) {
+    return items;
+  }
+
+  GumboOutput* output = gumbo_parse(html);
+
+  gumbo_destroy_output(&kGumboDefaultOptions, output);
   return items;
 }
