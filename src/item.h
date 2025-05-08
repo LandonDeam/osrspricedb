@@ -8,6 +8,10 @@ class item {
  public:
   explicit item(int ID);
 
+  /**
+  * @brief Gets the item's ID
+  * @return Returns the ID of this item.
+  */
   const int& getID() const {return ID;}
 
  private:
