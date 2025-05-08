@@ -1,8 +1,8 @@
 // Copyright Landon Deam 2024
 
 #pragma once
-#ifndef GET_PRICES_H_
-#define GET_PRICES_H_
+#ifndef GET_API_H_
+#define GET_API_H_
 
 #include <string>
 #include <vector>
@@ -17,8 +17,10 @@ class getter {
   explicit getter(Poco::URI uri);
   explicit getter(const std::string& str);
   void get_prices();
+  static void manage_prices(const getter& g);
   void get_info();
   void get_sources();
+  static void manage_sources(const getter& g);
  private:
   void get(const std::string& ep,
            const std::string& debug,
@@ -31,4 +33,4 @@ class getter {
     std::unordered_map<int, std::vector<class item_source>> all_sources;
 };
 
-#endif  // GET_PRICES_H_
+#endif  // GET_API_H_

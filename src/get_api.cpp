@@ -101,6 +101,27 @@ void getter::get_info() {
 }
 
 /**
+* @brief Gets all item sources
+*/
+void getter::get_sources() {
+  try {
+    for (const auto& [ID, item] : map) {
+      std::string endpoint = std::format(
+        R"(/api.php?format=json&action=parse&text={}&title={}&disablelimitreport=true&contentmodel=wikitext&prop=text)",
+        utils::urlEncode(
+          std::format(
+            R"({{{{Drop sources|{}|limit=100000|incrdt=y}}}})",
+            item.getName())),
+        utils::urlEncode(item.getName()));
+      get(endpoint, std::format("debug/sources/{}.json", ID), "source");
+    }
+    db_connection::writeItemSources(all_sources);
+  } catch (std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}
+
+/**
 * @brief Generates and returns a pointer to an HTTP GET request
 * @param ep Which endpoint to point the request to
 * @return Returns an HTTP GET request pointer
@@ -135,22 +156,4 @@ void getter::new_connection(Poco::URI uri) {
     uri.getHost(),
     uri.getPort(),
     ptrContext);
-}
-
-void getter::get_sources() {
-  try {
-    for (const auto& [ID, item] : map) {
-      std::string endpoint = std::format(
-        R"(/api.php?format=json&action=parse&text={}&title={}&disablelimitreport=true&contentmodel=wikitext&prop=text)",
-        utils::urlEncode(
-          std::format(
-            R"({{{{Drop sources|{}|limit=100000|incrdt=y}}}})",
-            item.getName())),
-        utils::urlEncode(item.getName()));
-      get(endpoint, std::format("debug/sources/{}.json", ID), "source");
-    }
-    db_connection::writeItemSources(all_sources);
-  } catch (std::exception& e) {
-    std::cerr << e.what() << std::endl;
-  }
 }
