@@ -66,7 +66,11 @@ void getter::get(const std::string& ep,
         map = utils::item_maps(responseStr.str());
         db_connection::writeItemMap(map);
       } else if (type.compare("source") == 0) {
-        db_connection::writeItemSources(utils::item_sources(responseStr.str()));
+        std::vector<item_source> sources =
+          utils::item_sources(responseStr.str());
+        if (sources.size() > 0) {
+          all_sources.insert_or_assign(sources.at(0).getID(), sources);
+        }
       }
       responseFile << responseStr.str();
     } else {
@@ -145,6 +149,7 @@ void getter::get_sources() {
         utils::urlEncode(item.getName()));
       get(endpoint, std::format("debug/sources/{}.json", ID), "source");
     }
+    db_connection::writeItemSources(all_sources);
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
   }

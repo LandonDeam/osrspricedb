@@ -22,7 +22,7 @@ class utils {
     const std::string& json);
   static const std::pair<std::unordered_map<int, price_update>, uint64_t>
     item_prices(const std::string& json);
-  static const std::unordered_map<int, item_source> item_sources(
+  static const std::vector<item_source> item_sources(
     const std::string& json);
   static const std::vector<std::unordered_map<std::string, std::string>>
     json_arr_parse(const std::string& input);

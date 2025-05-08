@@ -296,7 +296,7 @@ void db_connection::writePrices(const std::unordered_map<int,
 }
 
 void db_connection::writeItemSources(
-  const std::unordered_map<int, class item_source>& sources) {
+  const std::unordered_map<int, std::vector<class item_source>>& sources) {
   std::cout << "Writing sources... " << std::endl;
   std::string last_query;
   try {

@@ -5,6 +5,7 @@
 #define GET_PRICES_H_
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPClientSession.h"
@@ -26,6 +27,8 @@ class getter {
   Poco::Net::HTTPRequest* generate_request(const std::string& ep);
   void new_connection(Poco::URI uri);
   static inline std::unordered_map<int, class item_map> map;
+  static inline
+    std::unordered_map<int, std::vector<class item_source>> all_sources;
 };
 
 #endif  // GET_PRICES_H_

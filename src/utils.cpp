@@ -167,9 +167,9 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
   return std::make_pair(items, timestamp);
 }
 
-const std::unordered_map<int, item_source> utils::item_sources(
+const std::vector<item_source> utils::item_sources(
   const std::string& json) {
-  std::unordered_map<int, item_source> items;
+  std::vector<item_source> items;
 
   return items;
 }

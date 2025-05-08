@@ -9,6 +9,7 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 #include "price_update.h"
 #include "item_map.h"
 #include "item_source.h"
@@ -48,7 +49,7 @@ class db_connection {
                             class price_update>& prices,
                           uint64_t timestamp);
   static void writeItemSources(
-    const std::unordered_map<int, class item_source>& sources);
+    const std::unordered_map<int, std::vector<class item_source>>& sources);
 };
 
 #endif  // MYSQL_H_
