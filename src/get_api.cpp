@@ -1,9 +1,11 @@
 // Copyright Landon Deam 2024
 
 #include "get_api.h"
+#include <format>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <unordered_map>
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPClientSession.h"
 #include "Poco/Net/HTTPSClientSession.h"
@@ -15,6 +17,7 @@
 #include "Poco/URI.h"
 #include "Poco/StreamCopier.h"
 #include "Poco/Exception.h"
+#include "item_source.h"
 #include "utils.h"
 #include "mysql.h"
 
@@ -131,4 +134,18 @@ void getter::new_connection(Poco::URI uri) {
 }
 
 void getter::get_sources() {
+  try {
+    for (const auto& [ID, item] : map) {
+      std::string endpoint = std::format(
+        R"(/api.php?format=json&action=parse&text={}&title={}&disablelimitreport=true&contentmodel=wikitext&prop=text)",
+        utils::urlEncode(
+          std::format(
+            R"({{{{Drop sources|{}|limit=100000|incrdt=y}}}})",
+            item.getName())),
+        utils::urlEncode(item.getName()));
+      get(endpoint, std::format("debug/sources/{}.json", ID), "source");
+    }
+  } catch (std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
 }
