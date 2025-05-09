@@ -17,6 +17,7 @@
 class db_connection {
  private:
   inline static bool initialized = false;
+  inline static bool transaction = false;
 
   inline static std::string username;
   inline static std::string password;
@@ -52,7 +53,7 @@ class db_connection {
                           uint64_t timestamp);
 
   static void writeItemSources(
-    const std::unordered_map<int, std::vector<class item_source>>& sources);
+    const std::unordered_map<int, std::vector<class item_source>>& all_sources);
 };
 
 #endif  // MYSQL_H_

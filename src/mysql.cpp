@@ -205,8 +205,11 @@ void db_connection::build_table(const std::string& table_name,
 void db_connection::writeItemMap(
   const std::unordered_map<int, class item_map>& items) {
   std::cout << "Writing item map... " << std::endl;
+  while (transaction)
+    sleep(1);
   sess->sql("START TRANSACTION;");
   std::string last_query = "START TRANSACTION;";
+  transaction = true;
   try {
     for (const auto& [ID, item] : items) {
       std::string query = R"(REPLACE INTO osrs_market.item_map (ID, item_name, icon, examine, members, item_value, lowalch, highalch, ge_limit) VALUES ()";
@@ -237,10 +240,12 @@ void db_connection::writeItemMap(
     }
 
     sess->sql("COMMIT;").execute();
+    transaction = false;
   } catch (std::exception& e) {
     std::cerr << "Error writing item map: " << e.what() << std::endl;
     std::cout << "Last query: " << last_query << std::endl;
     sess->sql("ROLLBACK;").execute();
+    transaction = false;
   }
 }
 
@@ -255,8 +260,11 @@ void db_connection::writePrices(const std::unordered_map<int,
   std::cout << "Writing prices...                               " << std::endl;
   std::string last_query;
   try {
+    while (transaction)
+      sleep(1);
     sess->sql("START TRANSACTION;");
     last_query = "START TRANSACTION;";
+    transaction = true;
     for (const auto& [id, item] : prices) {
       std::string test_query =
         "SELECT ID FROM osrs_market.item_map WHERE ID = "
@@ -303,30 +311,59 @@ void db_connection::writePrices(const std::unordered_map<int,
       last_query = query;
       sess->sql(query).execute();
       sess->sql("COMMIT;").execute();
+      transaction = false;
     }
   } catch (std::exception& e) {
     std::cerr << "Error writing prices: " << e.what() << std::endl;
     std::cout << "Last query: " << last_query << std::endl;
     sess->sql("ROLLBACK;").execute();
+    transaction = false;
   }
 }
 
 /**
 * @brief Writes item drop sources into the MySQL database
-* @param sources Unordered map of item IDs and their corresponding lists of
+* @param all_sources Unordered map of item IDs and their corresponding lists of
 * drop sources.
 */
 void db_connection::writeItemSources(
-  const std::unordered_map<int, std::vector<class item_source>>& sources) {
+  const std::unordered_map<int, std::vector<class item_source>>& all_sources) {
   std::cout << "Writing sources... " << std::endl;
   std::string last_query;
   try {
+    while (transaction)
+      sleep(1);
     sess->sql("START TRANSACTION;");
     last_query = "START TRANSACTION;";
+    transaction = true;
+    for (auto&& [ID, sources] : all_sources) {
+      for (auto&& source : sources) {
+        std::string query = R"(REPLACE INTO osrs_market.item_source (ID, source, noted, skill, quantity_min, quantity_max, chance_min, chance_max, rolls) VALUES()";
+        query+=std::to_string(ID) + ",";
+        query+="\""+source.getSource()+"\",";
+        query+=std::to_string(source.isNoted()) + ",";
+        query+="\""+source.getSkill()+"\",";
+        query+=source.getQuantityMin() >= 0 ?
+          std::to_string(source.getQuantityMin()) + "," : "NULL,";
+        query+=source.getQuantityMax() >= 0 ?
+          std::to_string(source.getQuantityMax()) + "," : "NULL,";
+        query+=source.getChanceMin() >= 0.0f ?
+          std::to_string(source.getChanceMin())+"," : "NULL,";
+        query+=source.getChanceMax() >= 0.0f ?
+          std::to_string(source.getChanceMax()) + "," : "NULL,";
+        query+=std::to_string(source.getRolls()) + ");";
+
+        last_query = query;
+        sess->sql(query).execute();
+      }
+    }
+
     sess->sql("COMMIT;").execute();
+    transaction = false;
   } catch (std::exception& e) {
-  std::cerr << "Error writing sources: " << e.what() << std::endl;
-  std::cout << "Last query: " << last_query << std::endl;
-  sess->sql("ROLLBACK;").execute();
+    std::cerr << "Error writing sources: " << e.what() << std::endl;
+    std::cout << "Last query: " << last_query << std::endl;
+    sess->sql("ROLLBACK;").execute();
+    transaction = false;
   }
 }

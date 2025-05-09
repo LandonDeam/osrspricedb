@@ -119,7 +119,7 @@ void getter::get_sources() {
             R"({{{{Drop sources|{}|limit=100000|incrdt=y}}}})",
             item.getName())),
         utils::urlEncode(item.getName()));
-      std::cout << "Attempting to get " << std::setw(6) << ID
+      std::cout << "Getting sources for " << std::setw(6) << ID
         << " " << item.getName()<< "                         \r" << std::flush;
       get(endpoint, std::format("debug/sources/{}.json", ID), "source", ID);
     }

@@ -30,7 +30,7 @@ class utils {
   static const std::vector<item_source> item_sources(
     const std::string& json, const int& ID);
 
-  static const char* tidy_html_to_xml(const std::string& html_input);
+  static const std::string tidy_html_to_xml(const std::string& html_input);
 };
 
 #endif  // UTILS_H_
