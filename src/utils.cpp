@@ -257,9 +257,16 @@ const std::vector<item_source> utils::item_sources(
       int rolls = 1;
 
       // std::cout << "Parsing source...    " << std::endl;
-      auto source_td = node.select_node("td[1]/a");
-      if (source_td) {
-        source = source_td.node().text().as_string();
+      auto source_td = node.select_node("td[1]").node();
+      for (auto child : source_td.children()) {
+          if (child.type() == pugi::node_pcdata) {
+              source = child.value();  // First text node (e.g., "Gorak")
+              break;
+          }
+      }
+      if (source.empty()) {
+          auto link = source_td.select_node("a");
+          source = link.node().text().as_string();  // fallback
       }
 
       // std::cout << "Parsing skill...    " << std::endl;
@@ -328,44 +335,40 @@ const std::vector<item_source> utils::item_sources(
       std::string title = drop_span.attribute("title").as_string();
       std::string text = drop_span.text().as_string();
 
-      // e.g., "2 × 2.02%"
-      std::regex drop_re(R"((\d+)\s*×\s*([\d.]+)|([\d.]+)%)");
+      // Normalize whitespace
+      title.erase(std::remove_if(
+        title.begin(), title.end(), ::isspace), title.end());
+
+      // e.g., "2×2.02%", "2.34%", or "Always"
+      std::regex drop_re(R"((\d+)[×xX*](\d+(\.\d+)?)(%?)|(\d+(\.\d+)?)(%?))");
       std::smatch match;
 
-      if (!title.empty() && std::regex_search(title, match, drop_re)) {
+      if (!title.empty() && std::regex_match(title, match, drop_re)) {
           if (match[1].matched && match[2].matched) {
               // Has multiplier
               rolls = std::stoi(match[1]);
-              auto chance = std::stof(match[2]) / 100.0f;
-              if (chance < chance_min || chance_min == 0.0f) {
-                  chance_min = chance;
-              }
-              if (chance > chance_max) {
-                  chance_max = chance;
-              }
-          } else if (match[3].matched) {
+              float chance = std::stof(match[2]) / 100.0f;
+              if (chance < chance_min || chance_min == 0.0f)
+                chance_min = chance;
+              if (chance > chance_max) chance_max = chance;
+          } else if (match[5].matched) {
               // No multiplier
-              auto chance = std::stof(match[3]) / 100.0f;
-              if (chance < chance_min || chance_min == 0.0f) {
-                  chance_min = chance;
-              }
-              if (chance > chance_max) {
-                  chance_max = chance;
-              }
+              float chance = std::stof(match[5]) / 100.0f;
+              if (chance < chance_min || chance_min == 0.0f)
+                chance_min = chance;
+              if (chance > chance_max) chance_max = chance;
+              rolls = 1;
           }
       } else {
-          // Fallback: no title or invalid format
+          // Fallback
           float fallback_chance = -1.0f;
           if (text == "Always") {
               fallback_chance = 1.0f;
           }
-          if (fallback_chance < chance_min || chance_min == 0.0f) {
-              chance_min = fallback_chance;
-          }
-          if (fallback_chance > chance_max) {
-              chance_max = fallback_chance;
-          }
-          rolls = 1;  // Assume single roll in ambiguous cases
+          if (fallback_chance < chance_min || chance_min == 0.0f)
+            chance_min = fallback_chance;
+          if (fallback_chance > chance_max) chance_max = fallback_chance;
+          rolls = 1;
       }
 
       items.push_back(item_source(
