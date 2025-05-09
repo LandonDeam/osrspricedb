@@ -44,7 +44,8 @@ getter::getter(const std::string& str)
 */
 void getter::get(const std::string& ep,
                  const std::string& debug,
-                 const std::string& type) {
+                 const std::string& type,
+                 const int& ID) {
   try {
     Poco::Net::HTTPResponse response;
     Poco::Net::HTTPRequest* request = generate_request(ep);
@@ -66,9 +67,9 @@ void getter::get(const std::string& ep,
         db_connection::writeItemMap(map);
       } else if (type.compare("source") == 0) {
         std::vector<item_source> sources =
-          utils::item_sources(responseStr.str());
+          utils::item_sources(responseStr.str(), ID);
         if (sources.size() > 0) {
-          all_sources.insert_or_assign(sources.at(0).getID(), sources);
+          all_sources.insert_or_assign(ID, sources);
         }
       }
       responseFile << responseStr.str();
@@ -120,7 +121,7 @@ void getter::get_sources() {
         utils::urlEncode(item.getName()));
       std::cout << "Attempting to get " << std::setw(6) << ID
         << " " << item.getName()<< "                         \r" << std::flush;
-      get(endpoint, std::format("debug/sources/{}.json", ID), "source");
+      get(endpoint, std::format("debug/sources/{}.json", ID), "source", ID);
     }
     db_connection::writeItemSources(all_sources);
   } catch (std::exception& e) {

@@ -31,7 +31,8 @@ class getter {
  private:
   void get(const std::string& ep,
            const std::string& debug,
-           const std::string& type);
+           const std::string& type,
+           const int& ID = 0);
 
   Poco::Net::HTTPSClientSession client;
 

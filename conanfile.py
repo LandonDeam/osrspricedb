@@ -28,7 +28,8 @@ class osrs_price_dbRecipe(ConanFile):
         self.requires("rapidjson/cci.20230929", override=True)
         self.requires("mysql-connector-cpp/9.2.0", override=True)
         self.requires("poco/1.13.3")
-        self.requires("gumbo-parser/0.10.1")
+        self.requires("tidy-html5/5.8.0")
+        self.requires("pugixml/1.15")
         self.requires("doxygen/1.13.2")
 
     def generate(self):

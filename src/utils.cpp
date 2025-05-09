@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <iostream>
 #include <filesystem>
+#include <regex>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -15,7 +16,9 @@
 #include <vector>
 #include "price_update.h"
 #include "rapidjson/document.h"
-#include "gumbo.h"
+#include "tidy.h"
+#include "tidybuffio.h"
+#include "pugixml.hpp"
 
 /**
 * @brief URL-encodes a string.
@@ -182,7 +185,7 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
 * @return A vector containing all of the drop sources of a given item
 */
 const std::vector<item_source> utils::item_sources(
-  const std::string& json) {
+  const std::string& json, const int& ID) {
   std::vector<item_source> items;
   // TODO(LandonDeam): Actually parse the JSON (and subsequent HTML) response
 
@@ -211,16 +214,159 @@ const std::vector<item_source> utils::item_sources(
     return items;
   }
 
-  const auto& html = html_obj.GetString();
+  const auto& html = std::string(html_obj.GetString());
 
-  std::string no_drops = R"(<div class=\"mw-parser-output\"><dl><dd><i>No drop sources found.)";
+  const char* no_drops = R"(<dl><dd><i>No drop sources found.)";
 
-  if (std::string(html).starts_with(no_drops)) {
+  if (html.find(no_drops) > 0) {
     return items;
   }
 
-  GumboOutput* output = gumbo_parse(html);
+  pugi::xml_document doc;
 
-  gumbo_destroy_output(&kGumboDefaultOptions, output);
+  const char* xml = tidy_html_to_xml(html);
+
+  if (!doc.load_string(xml)) {
+    std::cerr << "Failed to convert " << ID << "to XML          " << std::endl;
+    return items;
+  }
+
+  for (auto&& row : doc.select_nodes("//table//tr")) {
+    auto&& node = row.node();
+
+    std::string source;
+    bool noted = false;
+    std::string skill;
+    int quantity_min = 0, quantity_max = 0;
+    float chance_min = 0.0f, chance_max = 0.0f;
+    int rolls = 1;
+
+    auto source_td = node.select_node("td[1]/a");
+    if (source_td) {
+      source = source_td.node().text().as_string();
+    }
+
+    auto skill_td = node.select_node("td[2]//a");
+    if (skill_td) {
+      skill = skill_td.node().attribute("title").as_string();
+    }
+
+    // Quantities: split on `;` andaccept numbers or ranges
+    // (e.g., 100 or 100-200)
+    std::string quantities_str =
+      node.select_node("td[3]").node().text().as_string();
+    std::stringstream qty_ss(quantities_str);
+    std::string part;
+
+    while (std::getline(qty_ss, part, ';')) {
+      // Trim whitespace
+      part.erase(0, part.find_first_not_of(" \t"));
+      part.erase(part.find_last_not_of(" \t") + 1);
+
+      // Check for " (noted)" suffix
+      const std::string noted_suffix = " (noted)";
+      if (part.size() >= noted_suffix.size() &&
+          part.compare(
+            part.size() - noted_suffix.size(), noted_suffix.size(),
+            noted_suffix) == 0) {
+          noted = true;
+          part = part.substr(0, part.size() - noted_suffix.size());
+      }
+      auto range = part.find('-');
+      if (range > 0) {
+        if (quantity_min > std::stoi(part.substr(0, range))
+        || quantity_min == 0) {
+          quantity_min = std::stoi(part.substr(0, range));
+        }
+        if (quantity_max < std::stoi(part.substr(range+1))) {
+          quantity_max = std::stoi(part.substr(range+1));
+        }
+      } else {
+        if (quantity_min > std::stoi(part) || quantity_min == 0) {
+          quantity_min = std::stoi(part);
+        }
+        if (quantity_max < std::stoi(part)) {
+          quantity_max = std::stoi(part);
+        }
+      }
+    }
+
+    // Drop chances and multipliers
+    auto drop_span = node.select_node("td[4]/span").node();
+    std::string title = drop_span.attribute("title").as_string();
+    // e.g., "2 × 2.02%"
+    std::regex drop_re(R"((\d+)\s*×\s*([\d.]+)|([\d.]+)%)");
+
+    std::smatch match;
+    if (std::regex_search(title, match, drop_re)) {
+      if (match[1].matched && match[2].matched) {
+        // Has multiplier
+        rolls = std::stoi(match[1]);
+        auto chance = std::stof(match[2]) / 100.0f;
+        if (chance < chance_min || chance_min == 0.0f) {
+          chance_min = chance;
+        }
+        if (chance > chance_max) {
+          chance_max = chance;
+        }
+      } else if (match[3].matched) {
+        // No multiplier
+        auto chance = std::stof(match[3]) / 100.0f;
+        if (chance < chance_min || chance_min == 0.0f) {
+          chance_min = chance;
+        }
+        if (chance > chance_max) {
+          chance_max = chance;
+        }
+      }
+    }
+
+    items.push_back(item_source(
+      ID,
+      source,
+      noted,
+      skill,
+      quantity_min, quantity_max,
+      chance_min, chance_max,
+      rolls));
+  }
+
   return items;
+}
+
+const char* utils::tidy_html_to_xml(const std::string& html_input) {
+  TidyDoc tdoc = tidyCreate();
+  TidyBuffer output = {0};
+  TidyBuffer errbuf = {0};
+  int rc = -1;
+
+  // Set options
+  tidyOptSetBool(tdoc, TidyXhtmlOut, yes);       // Output XHTML
+  tidyOptSetBool(tdoc, TidyXmlOut, yes);         // Also tag it as XML
+  tidyOptSetBool(tdoc, TidyQuiet, yes);          // No output
+  tidyOptSetBool(tdoc, TidyForceOutput, yes);    // Force output even if errors
+  tidyOptSetInt(tdoc, TidyWrapLen, 0);           // Don't wrap lines
+
+  rc = tidySetErrorBuffer(tdoc, &errbuf);
+  if (rc >= 0)
+      rc = tidyParseString(tdoc, html_input.c_str());
+  if (rc >= 0)
+      rc = tidyCleanAndRepair(tdoc);
+  if (rc >= 0)
+      rc = tidySaveBuffer(tdoc, &output);
+
+  std::string xml_output;
+  if (rc >= 0) {
+      xml_output.assign(reinterpret_cast<char*>(output.bp), output.size);
+  } else {
+      std::cerr << "Tidy failed:\n" << errbuf.bp << "\n";
+  }
+
+  tidyBufFree(&output);
+  tidyBufFree(&errbuf);
+  tidyRelease(tdoc);
+
+  const char* out = xml_output.c_str();
+
+  return out;
 }
