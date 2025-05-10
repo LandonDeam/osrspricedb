@@ -97,6 +97,10 @@ std::string utils::readTextFile(const std::string& path) {
   return nullptr;
 }
 
+// TODO(LandonDeam): Seriously refactor this method, and split much of the
+// logic into separate functions. There's a lot of copied code and pieces that
+// could easily be turned into their own functions.
+
 /**
 * @brief Takes a JSON response and parses it into an item map
 * @param json The JSON response to parse
