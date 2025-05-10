@@ -337,25 +337,74 @@ void db_connection::writeItemSources(
     last_query = "START TRANSACTION;";
     transaction = true;
     for (auto&& [ID, sources] : all_sources) {
-      for (auto&& source : sources) {
-        std::string query = R"(REPLACE INTO osrs_market.item_source (ID, source, noted, skill, quantity_min, quantity_max, chance_min, chance_max, rolls) VALUES()";
+      for (size_t i = 0; i < sources.size(); i++) {
+        auto&& source = sources.begin()+i;
+        std::string query = R"(REPLACE INTO osrs_market.item_source (item_ID, source_ID, source, noted, skill, quantity_min, quantity_max, chance_min, chance_max, rolls) VALUES()";
         query+=std::to_string(ID) + ",";
-        query+="\""+source.getSource()+"\",";
-        query+=std::to_string(source.isNoted()) + ",";
-        query+="\""+source.getSkill()+"\",";
-        query+=source.getQuantityMin() >= 0 ?
-          std::to_string(source.getQuantityMin()) + "," : "NULL,";
-        query+=source.getQuantityMax() >= 0 ?
-          std::to_string(source.getQuantityMax()) + "," : "NULL,";
-        query+=source.getChanceMin() >= 0.0f ?
-          std::to_string(source.getChanceMin())+"," : "NULL,";
-        query+=source.getChanceMax() >= 0.0f ?
-          std::to_string(source.getChanceMax()) + "," : "NULL,";
-        query+=std::to_string(source.getRolls()) + ");";
+        query+=std::to_string(i) + ",";
+        query+="\""+source->getSource()+"\",";
+        query+=std::to_string(source->isNoted()) + ",";
+        query+="\""+source->getSkill()+"\",";
+        query+=source->getQuantityMin() >= 0 ?
+          std::to_string(source->getQuantityMin()) + "," : "NULL,";
+        query+=source->getQuantityMax() >= 0 ?
+          std::to_string(source->getQuantityMax()) + "," : "NULL,";
+        query+=source->getChanceMin() >= 0.0f ?
+          std::to_string(source->getChanceMin())+"," : "NULL,";
+        query+=source->getChanceMax() >= 0.0f ?
+          std::to_string(source->getChanceMax()) + "," : "NULL,";
+        query+=std::to_string(source->getRolls()) + ");";
 
         last_query = query;
         sess->sql(query).execute();
       }
+    }
+
+    sess->sql("COMMIT;").execute();
+    transaction = false;
+  } catch (std::exception& e) {
+    std::cerr << "Error writing sources: " << e.what() << std::endl;
+    std::cout << "Last query: " << last_query << std::endl;
+    sess->sql("ROLLBACK;").execute();
+    transaction = false;
+  }
+}
+
+/**
+* @brief Writes a single item's drop sources into the MySQL database.
+* Meant for debugging purposes
+* @param sources Vector of item drop sources.
+*/
+void db_connection::writeItemSource(
+  const std::vector<class item_source>& sources) {
+  std::cout << "Writing sources... " << std::endl;
+  std::string last_query;
+  try {
+    while (transaction)
+      sleep(1);
+    sess->sql("START TRANSACTION;");
+    last_query = "START TRANSACTION;";
+    transaction = true;
+    for (size_t i = 0; i < sources.size(); i++) {
+      auto&& source = sources.begin()+i;
+      std::string query = R"(REPLACE INTO osrs_market.item_source (item_ID, source_ID, source, noted, skill, quantity_min, quantity_max, chance_min, chance_max, rolls) VALUES()";
+      query+=std::to_string(source->getID()) + ",";
+      query+=std::to_string(i) + ",";
+      query+="\""+source->getSource()+"\",";
+      query+=std::to_string(source->isNoted()) + ",";
+      query+="\""+source->getSkill()+"\",";
+      query+=source->getQuantityMin() >= 0 ?
+        std::to_string(source->getQuantityMin()) + "," : "NULL,";
+      query+=source->getQuantityMax() >= 0 ?
+        std::to_string(source->getQuantityMax()) + "," : "NULL,";
+      query+=source->getChanceMin() >= 0.0f ?
+        std::to_string(source->getChanceMin())+"," : "NULL,";
+      query+=source->getChanceMax() >= 0.0f ?
+        std::to_string(source->getChanceMax()) + "," : "NULL,";
+      query+=std::to_string(source->getRolls()) + ");";
+
+      last_query = query;
+      sess->sql(query).execute();
     }
 
     sess->sql("COMMIT;").execute();

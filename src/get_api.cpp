@@ -122,6 +122,9 @@ void getter::get_sources() {
       std::cout << "Getting sources for " << std::setw(6) << ID
         << " " << item.getName()<< "                         \r" << std::flush;
       get(endpoint, std::format("debug/sources/{}.json", ID), "source", ID);
+      // if (!all_sources[ID].empty()) {
+      //   db_connection::writeItemSource(all_sources[ID]);
+      // }
     }
     db_connection::writeItemSources(all_sources);
   } catch (std::exception& e) {

@@ -54,6 +54,9 @@ class db_connection {
 
   static void writeItemSources(
     const std::unordered_map<int, std::vector<class item_source>>& all_sources);
+
+  static void writeItemSource(
+    const std::vector<class item_source>& sources);
 };
 
 #endif  // MYSQL_H_

@@ -1,6 +1,7 @@
 R""(
 CREATE TABLE IF NOT EXISTS osrs_market.item_source(
-ID MEDIUMINT NOT NULL,
+item_ID MEDIUMINT NOT NULL,
+source_ID INT NOT NULL,
 source VARCHAR(100) NOT NULL,
 noted BOOLEAN NOT NULL,
 skill varchar(100),
@@ -10,8 +11,8 @@ chance_min FLOAT,
 chance_max FLOAT,
 rolls INT NOT NULL,
 
-FOREIGN KEY (ID) REFERENCES osrs_market.item_map(ID) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY (item_ID) REFERENCES osrs_market.item_map(ID) ON UPDATE CASCADE ON DELETE CASCADE,
 
-PRIMARY KEY (ID, source, chance_min, chance_max)
+PRIMARY KEY (item_ID, source_ID)
 );
 )""

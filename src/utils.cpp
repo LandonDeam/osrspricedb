@@ -371,6 +371,9 @@ const std::vector<item_source> utils::item_sources(
           rolls = 1;
       }
 
+      if (source.compare("") == 0)
+       continue;
+
       items.push_back(item_source(
         ID,
         source,
