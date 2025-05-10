@@ -310,7 +310,9 @@ const std::vector<item_source> utils::item_sources(
         // Trim whitespace
         segment.erase(0, segment.find_first_not_of(" \t"));
         segment.erase(segment.find_last_not_of(" \t") + 1);
-        segment.erase(segment.find_last_not_of("&nbsp") + 1);
+        segment.erase(segment.find_last_not_of(R"(&abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ)") + 1);
+
+        if (segment.empty()) continue;
 
         parts.push_back(segment);
       }
@@ -375,7 +377,11 @@ const std::vector<item_source> utils::item_sources(
         }
 
         // Now parse chance fraction
-        std::regex frac_only_re(R"((\d+)\/(\d+))");
+        std::regex frac_only_re(R"((\d+\.?\d*)\/(\d+\.?\d*))");
+        std::regex range_re(R"((.+)(–|-)(.+))");
+        std::regex percentage_re(R"((\d+\.?\d*)%)");
+        std::smatch percentage_match;
+        std::smatch range_match;
         std::smatch frac_match;
         if (std::regex_match(fraction, frac_match, frac_only_re)) {
           float numerator = std::stof(frac_match[1]);
@@ -384,8 +390,70 @@ const std::vector<item_source> utils::item_sources(
           chance_min = (chance_min == 0.0f) ?
             chance : std::min(chance_min, chance);
           chance_max = std::max(chance_max, chance);
+        } else if (std::regex_match(fraction, range_match, range_re)) {
+          // First in range
+          auto first = range_match[1].str();
+          if (std::regex_match(first, percentage_match, percentage_re)) {
+            float chance = std::stof(percentage_match[1]);
+            chance_min = (chance_min == 0.0f) ?
+             chance : std::min(chance_min, chance);
+            chance_max = std::max(chance_max, chance);
+          } else if (std::regex_match(first, frac_match, frac_only_re)) {
+            float numerator = std::stof(frac_match[1]);
+            float denominator = std::stof(frac_match[2]);
+            float chance = numerator / denominator;
+            chance_min = (chance_min == 0.0f) ?
+              chance : std::min(chance_min, chance);
+            chance_max = std::max(chance_max, chance);
+          }
+          // Second in range
+          auto second = range_match[3].str();
+          if (std::regex_match(second, percentage_match, percentage_re)) {
+            float chance = std::stof(percentage_match[1]);
+            chance_min = (chance_min == 0.0f) ?
+             chance : std::min(chance_min, chance);
+            chance_max = std::max(chance_max, chance);
+          } else if (std::regex_match(second, frac_match, frac_only_re)) {
+            float numerator = std::stof(frac_match[1]);
+            float denominator = std::stof(frac_match[2]);
+            float chance = numerator / denominator;
+            chance_min = (chance_min == 0.0f) ?
+              chance : std::min(chance_min, chance);
+            chance_max = std::max(chance_max, chance);
+          }
+
         } else if (raw_text == "Always" || title == "Always") {
           chance_min = chance_max = 1.0f;
+        } else if (raw_text == ";" || title == ";" || fraction == ";") {
+          continue;
+        } else if (raw_text == "-" || title == "-" || fraction == "-") {
+          continue;
+        } else if (raw_text == "–" || title == "–" || fraction == "–") {
+          continue;
+        } else if (raw_text == "Never" || title == "Never") {
+          continue;
+        } else if (raw_text == "Varies" || title == "Varies"
+          || fraction == "Varies") {
+          continue;
+        } else if (raw_text == "Common" || title == "Common") {
+          continue;
+        } else if (raw_text == "Uncommon" || title == "Uncommon") {
+          continue;
+        } else if (raw_text == "Rare" || title == "Rare") {
+          continue;
+        } else if (raw_text == "Unknown" || title == "Unknown") {
+          continue;
+        } else if (raw_text == "Random" || title == "Random") {
+          continue;
+        } else if (raw_text == "Once" || title == "Once") {
+          continue;
+        } else if (raw_text == "Very rare" || title == "Very rare"
+         || fraction == "Veryrare") {
+          continue;
+        } else {
+          std::cout << "Failed to parse chance fraction: "
+            << fraction << std::endl;
+          std::cout << "Item: " << ID << std::endl;
         }
       }
 
