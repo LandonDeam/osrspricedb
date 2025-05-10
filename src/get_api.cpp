@@ -22,6 +22,7 @@
 #include "utils.h"
 #include "mysql.h"
 
+const char* spaces_10 = "          ";
 const char* spaces_20 = "                    ";
 const char* spaces_40 = "                                        ";
 
@@ -112,7 +113,7 @@ void getter::get_info() {
 */
 void getter::get_sources() {
   std::cout << "Attempting to get item drops data from "
-    << "MediaWiki endpoint /api.php                             " << std::endl;
+    << "MediaWiki endpoint /api.php" << spaces_40 << std::endl;
   try {
     for (const auto& [ID, item] : map) {
       std::string endpoint = std::format(
@@ -123,7 +124,7 @@ void getter::get_sources() {
             item.getName())),
         utils::urlEncode(item.getName()));
       std::cout << "Getting sources for " << std::setw(6) << ID
-        << " " << item.getName()<< "                         \r" << std::flush;
+        << " " << item.getName()<< spaces_10 << "\r" << std::flush;
       get(endpoint, std::format("debug/sources/{}.json", ID), "source", ID);
       // if (!all_sources[ID].empty()) {
       //   db_connection::writeItemSource(all_sources[ID]);
