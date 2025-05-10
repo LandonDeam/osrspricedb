@@ -90,7 +90,7 @@ void getter::get(const std::string& ep,
 * @brief Gets all of the prices
 */
 void getter::get_prices() {
-  std::cout << "Attempting to get price data from /api/v1/osrs/latest/"
+  std::cout << "Attempting to get price data from /api/v1/osrs/latest/        "
     << std::endl;
   this->get("/api/v1/osrs/latest/", "debug/prices.json", "price");
 }
@@ -109,7 +109,7 @@ void getter::get_info() {
 */
 void getter::get_sources() {
   std::cout << "Attempting to get item drops data from "
-    << "MediaWiki endpoint /api.php" << std::endl;
+    << "MediaWiki endpoint /api.php                             " << std::endl;
   try {
     for (const auto& [ID, item] : map) {
       std::string endpoint = std::format(
