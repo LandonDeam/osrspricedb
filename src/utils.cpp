@@ -282,125 +282,133 @@ const std::vector<item_source> utils::item_sources(
       // Parse quantity properly from child nodes
       // (captures all ranges and "noted")
       auto quantity_td = node.select_node("td[3]").node();
-      std::string quantities_str;
+      std::string raw_quantity = quantity_td.text().as_string();
 
-      // Concatenate all pcdata in the quantity cell
-      for (auto& child : quantity_td.children()) {
-        if (child.type() == pugi::node_pcdata) {
-          quantities_str += child.value();
-        }
-        std::string cls = child.attribute("class").as_string();
+      // Check for <span class="dropsline-noted">
+      for (auto& span : quantity_td.children("span")) {
+        std::string cls = span.attribute("class").as_string();
         if (cls == "dropsline-noted") {
           noted = true;
+          break;
         }
       }
 
-      // This is the UTF-8 encoded non-breaking space (U+00A0)
-    const std::string nbsp_utf8 = "\xC2\xA0";
+      // Normalize
+      const std::string nbsp_utf8 = "\xC2\xA0";
+      size_t pos;
+      while ((pos = raw_quantity.find(nbsp_utf8)) != std::string::npos) {
+        raw_quantity.erase(pos, nbsp_utf8.length());
+      }
+      raw_quantity.erase(std::remove(
+        raw_quantity.begin(), raw_quantity.end(), ','), raw_quantity.end());
 
-    // Remove all non-breaking spaces
-    size_t pos;
-    while ((pos = quantities_str.find(nbsp_utf8)) != std::string::npos) {
-      quantities_str.erase(pos, nbsp_utf8.length());
-    }
+      // Split on ';'
+      std::vector<std::string> parts;
+      std::stringstream ss(raw_quantity);
+      std::string segment;
+      while (std::getline(ss, segment, ';')) {
+        // Trim whitespace
+        segment.erase(0, segment.find_first_not_of(" \t"));
+        segment.erase(segment.find_last_not_of(" \t") + 1);
+        segment.erase(segment.find_last_not_of("&nbsp") + 1);
 
-    // Remove commas (thousands separators)
-    quantities_str.erase(
-    std::remove(quantities_str.begin(), quantities_str.end(), ','),
-    quantities_str.end());
-
-      // Parse min/max
-    std::regex qty_range_re(R"((\d+)[–-](\d+))");
-    std::regex qty_single_re(R"((\d+))");
-    std::smatch m;
-
-    if (std::regex_search(quantities_str, m, qty_range_re)) {
-      quantity_min = std::stoi(m[1]);
-      quantity_max = std::stoi(m[2]);
-    } else if (std::regex_search(quantities_str, m, qty_single_re)) {
-      quantity_min = quantity_max = std::stoi(m[1]);
-    } else {
-      quantity_min = quantity_max = -1;
-    }
-
-    // std::cout << "Parsing rarity...    " << std::endl;
-    // Drop chances and multipliers
-    auto rarity_td = node.select_node("td[4]").node();
-    chance_min = 0.0f;
-    chance_max = 0.0f;
-
-    // If column is just "Always", no span or data-drop-* attributes
-    bool found_valid_span = false;
-    for (auto& span : rarity_td.children("span")) {
-      std::string text = span.text().as_string();
-
-      // Handle "Always" first
-      if (text == "Always") {
-        chance_min = chance_max = 1.0f;
-        found_valid_span = true;
-        break;
+        parts.push_back(segment);
       }
 
-      std::string fraction = span.attribute("data-drop-fraction").as_string();
-      std::string percent = span.attribute("data-drop-percent").as_string();
-      std::string title = span.attribute("title").as_string();
+      // Parse each quantity segment
+      std::regex range_re(R"((\d+)\s*(–|-)\s*(\d+))");  // Match either dash
+      std::regex num_re(R"((\d+))");
 
-      if (fraction.empty() && percent.empty() && title.empty())
+      for (const auto& part : parts) {
+        try {
+          std::smatch match;
+          if (std::regex_match(part, match, range_re)) {
+            int qmin = std::stoi(match[1]);
+            int qmax = std::stoi(match[3]);
+            if (quantity_min == 0 || qmin < quantity_min) quantity_min = qmin;
+            if (quantity_max == 0 || qmax > quantity_max) quantity_max = qmax;
+          } else if (std::regex_match(part, match, num_re)) {
+            int q = std::stoi(match[1]);
+            if (quantity_min == 0 || q < quantity_min) quantity_min = q;
+            if (quantity_max == 0 || q > quantity_max) quantity_max = q;
+          } else {
+            std::cerr << "Malformed part: " << part << std::endl;
+          }
+        } catch (std::exception& e) {
+            std::cerr << "Failed to parse part: " << part
+              <<" → " << e.what() << std::endl;
+            throw e;
+        }
+      }
+
+      // std::cout << "Parsing rarity...    " << std::endl;
+      // Drop chances and multipliers
+      auto rarity_td = node.select_node("td[4]").node();
+
+      bool found_valid_span = false;
+
+      for (auto& span : rarity_td.children("span")) {
+        std::string fraction = span.attribute("data-drop-fraction").as_string();
+        std::string title = span.attribute("title").as_string();
+        std::string raw_text = span.text().as_string();
+
+        if (fraction.empty()) {
+          fraction = raw_text;  // fallback
+        }
+
+        found_valid_span = true;
+
+        // Strip non-numeric symbols and whitespace from the fraction string
+        fraction.erase(std::remove(
+          fraction.begin(), fraction.end(), '~'), fraction.end());
+        fraction.erase(std::remove(
+          fraction.begin(), fraction.end(), ','), fraction.end());
+        fraction.erase(std::remove_if(
+          fraction.begin(), fraction.end(), ::isspace), fraction.end());
+
+        // Detect and remove roll prefix (e.g., "4×9/83")
+        std::regex roll_prefix_re(R"((\d+)×(.+))");
+        std::smatch roll_match;
+        if (std::regex_match(fraction, roll_match, roll_prefix_re)) {
+          rolls = std::stoi(roll_match[1]);
+          fraction = roll_match[2];  // strip rolls prefix, leaves just "9/83"
+        }
+
+        // Now parse chance fraction
+        std::regex frac_only_re(R"((\d+)\/(\d+))");
+        std::smatch frac_match;
+        if (std::regex_match(fraction, frac_match, frac_only_re)) {
+          float numerator = std::stof(frac_match[1]);
+          float denominator = std::stof(frac_match[2]);
+          float chance = numerator / denominator;
+          chance_min = (chance_min == 0.0f) ?
+            chance : std::min(chance_min, chance);
+          chance_max = std::max(chance_max, chance);
+        } else if (raw_text == "Always" || title == "Always") {
+          chance_min = chance_max = 1.0f;
+        }
+      }
+
+      if (!found_valid_span) {
+        std::string fallback = rarity_td.text().as_string();
+        if (fallback == "Always") {
+          chance_min = chance_max = 1.0f;
+          rolls = 1;
+        }
+      }
+
+
+      if (source.compare("") == 0)
         continue;
 
-      found_valid_span = true;
-
-      // Strip ~ and whitespace
-      fraction.erase(std::remove(
-        fraction.begin(),
-        fraction.end(),
-        '~'), fraction.end());
-      fraction.erase(std::remove_if(
-        fraction.begin(),
-        fraction.end(),
-        ::isspace), fraction.end());
-
-      // Extract rolls if prefixed (e.g., "3×8/50" → rolls = 3)
-      std::regex roll_prefix_re(R"((\d+)[×xX*](.+))");  // e.g., "3×8/50"
-      std::smatch roll_match;
-      if (std::regex_match(fraction, roll_match, roll_prefix_re)) {
-        rolls = std::stoi(roll_match[1]);
-        fraction = roll_match[2];  // remaining part: "8/50"
-      }
-
-      // Parse fraction (e.g., "8/50")
-      std::regex frac_re(R"((\d+)/(\d+))");
-      std::smatch frac_match;
-      if (std::regex_match(fraction, frac_match, frac_re)) {
-        float numerator = std::stof(frac_match[1]);
-        float denominator = std::stof(frac_match[2]);
-        float chance = numerator / denominator;
-        chance_min = (chance_min == 0.0f) ?
-          chance : std::min(chance_min, chance);
-        chance_max = std::max(chance_max, chance);
-      }
-    }
-
-    // If no span was matched, check if raw td text says "Always"
-    if (!found_valid_span) {
-      std::string raw = rarity_td.text().as_string();
-      if (raw == "Always") {
-        chance_min = chance_max = 1.0f;
-      }
-    }
-
-
-    if (source.compare("") == 0)
-      continue;
-
-    items.push_back(item_source(
-      ID,
-      source,
-      noted,
-      skill,
-      quantity_min, quantity_max,
-      chance_min, chance_max,
-      rolls));
+      items.push_back(item_source(
+        ID,
+        source,
+        noted,
+        skill,
+        quantity_min, quantity_max,
+        chance_min, chance_max,
+        rolls));
     }
   } catch (std::exception& e) {
     std::cerr << "FAILED ON " << ID << std::endl;
