@@ -3,6 +3,7 @@
 #include "mysql.h"
 #include <mysqlx/devapi/common.h>
 #include <mysqlx/xdevapi.h>
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -396,11 +397,18 @@ void db_connection::writeItemSource(
       query+=source->getQuantityMin() >= 0 ?
         std::to_string(source->getQuantityMin()) + "," : "NULL,";
       query+=source->getQuantityMax() >= 0 ?
-        std::to_string(source->getQuantityMax()) + "," : "NULL,";
+      std::to_string(source->getQuantityMax()) + "," : "NULL,";
+
+      std::stringstream chance_stream;
+      chance_stream << std::fixed <<
+        std::setprecision(20) << source->getChanceMin();
       query+=source->getChanceMin() >= 0.0f ?
-        std::to_string(source->getChanceMin())+"," : "NULL,";
+        chance_stream.str()+"," : "NULL,";
+      chance_stream.str("");
+      chance_stream << std::fixed <<
+        std::setprecision(20) << source->getChanceMax();
       query+=source->getChanceMax() >= 0.0f ?
-        std::to_string(source->getChanceMax()) + "," : "NULL,";
+        chance_stream.str() + "," : "NULL,";
       query+=std::to_string(source->getRolls()) + ");";
 
       last_query = query;
