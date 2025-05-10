@@ -22,6 +22,9 @@
 #include "utils.h"
 #include "mysql.h"
 
+const char* spaces_20 = "                    ";
+const char* spaces_40 = "                                        ";
+
 /// @brief Creates a connection with a URI
 /// @param uri URI to connect to
 getter::getter(Poco::URI uri) {
@@ -90,8 +93,8 @@ void getter::get(const std::string& ep,
 * @brief Gets all of the prices
 */
 void getter::get_prices() {
-  std::cout << "Attempting to get price data from /api/v1/osrs/latest/        "
-    << std::endl;
+  std::cout << "Attempting to get price data from /api/v1/osrs/latest/"
+    << spaces_20 << std::endl;
   this->get("/api/v1/osrs/latest/", "debug/prices.json", "price");
 }
 
@@ -99,8 +102,8 @@ void getter::get_prices() {
 * @brief Gets all item info
 */
 void getter::get_info() {
-  std::cout << "Attempting to get item data from /api/v1/osrs/mapping/        "
-    << std::endl;
+  std::cout << "Attempting to get item data from /api/v1/osrs/mapping/"
+    << spaces_20 << std::endl;
   this->get("/api/v1/osrs/mapping/", "debug/mapping.json", "info");
 }
 
@@ -130,7 +133,7 @@ void getter::get_sources() {
   } catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
   }
-  std::cout << "Finished getting sources.                       " << std::endl;
+  std::cout << "Finished getting sources." << spaces_40 << std::endl;
 }
 
 /**
@@ -193,7 +196,7 @@ void getter::manage_sources(getter* g) {
 void getter::manage_prices(getter* g) {
   while (true) {
     g->get_prices();
-    std::cout << "Successfully wrote prices.                    " << std::endl;
+    std::cout << "Successfully wrote prices." << spaces_40 << std::endl;
     sleep(60);  // 1 minute
   }
 }
