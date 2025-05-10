@@ -22,7 +22,6 @@
 #include "utils.h"
 #include "mysql.h"
 
-const char* spaces_10 = "          ";
 const char* spaces_20 = "                    ";
 const char* spaces_40 = "                                        ";
 
@@ -124,7 +123,7 @@ void getter::get_sources() {
             item.getName())),
         utils::urlEncode(item.getName()));
       std::cout << "Getting sources for " << std::setw(6) << ID
-        << " " << item.getName()<< spaces_10 << "\r" << std::flush;
+        << " " << item.getName()<< spaces_20 << "\r" << std::flush;
       get(endpoint, std::format("debug/sources/{}.json", ID), "source", ID);
       // if (!all_sources[ID].empty()) {
       //   db_connection::writeItemSource(all_sources[ID]);
