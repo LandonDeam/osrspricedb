@@ -431,12 +431,12 @@ void db_connection::writeItemSource(
 
       std::stringstream chance_stream;
       chance_stream << std::fixed <<
-        std::setprecision(20) << source->getChanceMin();
+        std::setprecision(19) << source->getChanceMin();
       query+=source->getChanceMin() >= 0.0f ?
         chance_stream.str()+"," : "NULL,";
       chance_stream.str("");
       chance_stream << std::fixed <<
-        std::setprecision(20) << source->getChanceMax();
+        std::setprecision(19) << source->getChanceMax();
       query+=source->getChanceMax() >= 0.0f ?
         chance_stream.str() + "," : "NULL,";
       query+=std::to_string(source->getRolls()) + ");";

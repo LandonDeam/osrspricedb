@@ -398,7 +398,7 @@ const std::vector<item_source> utils::item_sources(
           // First in range
           auto first = range_match[1].str();
           if (std::regex_match(first, percentage_match, percentage_re)) {
-            float chance = std::stof(percentage_match[1]);
+            float chance = std::stof(percentage_match[1]) / 100.0f;
             chance_min = (chance_min == 0.0f) ?
              chance : std::min(chance_min, chance);
             chance_max = std::max(chance_max, chance);
@@ -413,7 +413,7 @@ const std::vector<item_source> utils::item_sources(
           // Second in range
           auto second = range_match[3].str();
           if (std::regex_match(second, percentage_match, percentage_re)) {
-            float chance = std::stof(percentage_match[1]);
+            float chance = std::stof(percentage_match[1]) / 100.0f;
             chance_min = (chance_min == 0.0f) ?
              chance : std::min(chance_min, chance);
             chance_max = std::max(chance_max, chance);
