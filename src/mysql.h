@@ -36,6 +36,7 @@ class db_connection {
   static void build_price_update();
   static void build_item_map();
   static void build_item_source();
+  static void build_summary_view();
 
   static void build_table(const std::string& table_name,
     const std::string& create_command);

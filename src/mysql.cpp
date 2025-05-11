@@ -33,6 +33,10 @@ const char* schema_sql =
   #include "../database/create_db.sql"
 ;
 
+const char* summary_view_sql =
+  #include "../database/create_summary.sql"
+;
+
 /**
 * @brief Initialize the database connection.
 */
@@ -128,6 +132,25 @@ void db_connection::connect_tables() {
     build_item_source();  // Create item_map table if it doesn't exist
   }
   std::cout << "Item source table connected." << std::endl;
+
+  try {
+    std::string view_check_query =
+      "SELECT COUNT(*) FROM INFORMATION_SCHEMA.VIEWS "
+      R"(WHERE TABLE_SCHEMA = 'osrs_market' AND TABLE_NAME = 'item_summary_view';)";
+
+    auto res = sess->sql(view_check_query).execute();
+    auto row = res.fetchOne();
+
+    if (row[0].get<int>() == 0) {
+      std::cout << "Summary view does not exist. Creating..." << std::endl;
+      build_summary_view();
+    } else {
+      std::cout << "Summary view already exists." << std::endl;
+    }
+  } catch (const std::exception& e) {
+    std::cerr << "Error checking/creating summary view: "
+      << e.what() << std::endl;
+  }
 }
 
 /**
@@ -167,6 +190,13 @@ void db_connection::build_item_map() {
 */
 void db_connection::build_item_source() {
   build_table("item source", item_source_sql);
+}
+
+/**
+* @brief Builds the view for the summary
+*/
+void db_connection::build_summary_view() {
+  build_table("summary view", summary_view_sql);
 }
 
 /**
