@@ -235,15 +235,20 @@ void db_connection::build_table(const std::string& table_name,
 */
 void db_connection::writeItemMap(
   const std::unordered_map<int, class item_map>& items) {
-  std::cout << "Writing item map... " << std::endl;
+  std::cout << "Writing item map with " << items.size()
+    << " items(s)..." << std::endl;
   while (transaction)
     sleep(1);
+  transaction = true;
   sess->sql("START TRANSACTION;");
   std::string last_query = "START TRANSACTION;";
-  transaction = true;
+  std::cout << "Starting transaction..." << std::endl;
   try {
+    std::string query = R"(REPLACE INTO osrs_market.item_map (ID, item_name, icon, examine, members, item_value, lowalch, highalch, ge_limit) VALUES)";
+    bool first = true;
     for (const auto& [ID, item] : items) {
-      std::string query = R"(REPLACE INTO osrs_market.item_map (ID, item_name, icon, examine, members, item_value, lowalch, highalch, ge_limit) VALUES ()";
+      query+= first ? "\n(" : ",\n(" ;
+      first = false;
       query+=std::to_string(item.getID())+", ";
       query+="\""+item.getName()+"\", ";
       query+="\""+item.getIcon()+"\", ";
@@ -265,10 +270,11 @@ void db_connection::writeItemMap(
       } else {
         query+="NULL";
       }
-      query+=");";
-      last_query = query;
-      sess->sql(query).execute();
+      query+=")";
     }
+    query+=";";
+    last_query = query;
+    sess->sql(query).execute();
 
     sess->sql("COMMIT;").execute();
     transaction = false;
@@ -296,6 +302,11 @@ void db_connection::writePrices(const std::unordered_map<int,
     sess->sql("START TRANSACTION;");
     last_query = "START TRANSACTION;";
     transaction = true;
+    bool first = true;
+
+    std::string buy_query = R"(REPLACE INTO osrs_market.price_update (ID, price_type, price, updated) VALUES)";
+    std::string sell_query = R"(REPLACE INTO osrs_market.price_update (ID, price_type, price, updated) VALUES)";
+    std::string series_query = R"(REPLACE INTO osrs_market.price_series (ID, fetched, buy_updated, sell_updated) VALUES)";
     for (const auto& [id, item] : prices) {
       std::string test_query =
         "SELECT ID FROM osrs_market.item_map WHERE ID = "
@@ -308,42 +319,47 @@ void db_connection::writePrices(const std::unordered_map<int,
         continue;
       }
 
-      std::string query = R"(REPLACE INTO osrs_market.price_update (ID, price_type, price, updated) VALUES ()";
-      query+=std::to_string(id)+", ";
-      query+="\"buy\", ";
-      query+=item.get_buy() >= 0 ?
+      buy_query+= first ? "\n(" : ",\n(" ;
+      buy_query+=std::to_string(id)+", ";
+      buy_query+="\"buy\", ";
+      buy_query+=item.get_buy() >= 0 ?
         std::to_string(item.get_buy())+", " : "NULL, ";
-      query+=item.get_buy_timestamp() > 0 ?
-        "FROM_UNIXTIME("+std::to_string(item.get_buy_timestamp())+"));"
-        : "FROM_UNIXTIME(1361491200));";
-      last_query = query;
-      sess->sql(query).execute();
+      buy_query+=item.get_buy_timestamp() > 0 ?
+        "FROM_UNIXTIME("+std::to_string(item.get_buy_timestamp())+"))"
+        : "FROM_UNIXTIME(1361491200))";
 
-      query = R"(REPLACE INTO osrs_market.price_update (ID, price_type, price, updated) VALUES ()";
-      query+=std::to_string(id)+", ";
-      query+="\"sell\", ";
-      query+=item.get_sell() >= 0 ?
+      sell_query+= first ? "\n(" : ",\n(" ;
+      sell_query+=std::to_string(id)+", ";
+      sell_query+="\"sell\", ";
+      sell_query+=item.get_sell() >= 0 ?
         std::to_string(item.get_sell())+", " : "NULL, ";
-      query+=item.get_sell_timestamp() > 0 ?
-        "FROM_UNIXTIME("+std::to_string(item.get_sell_timestamp())+"));"
-        : "FROM_UNIXTIME(1361491200));";
-      last_query = query;
-      sess->sql(query).execute();
+      sell_query+=item.get_sell_timestamp() > 0 ?
+        "FROM_UNIXTIME("+std::to_string(item.get_sell_timestamp())+"))"
+        : "FROM_UNIXTIME(1361491200))";
 
-      query = R"(REPLACE INTO osrs_market.price_series (ID, fetched, buy_updated, sell_updated) VALUES ()";
-      query+=std::to_string(id)+", ";
-      query+="FROM_UNIXTIME("+std::to_string(timestamp)+"), ";
-      query+=item.get_buy_timestamp() > 0 ?
+      series_query+= first ? "\n(" : ",\n(" ;
+      series_query+=std::to_string(id)+", ";
+      series_query+="FROM_UNIXTIME("+std::to_string(timestamp)+"), ";
+      series_query+=item.get_buy_timestamp() > 0 ?
         "FROM_UNIXTIME("+std::to_string(item.get_buy_timestamp())+"), "
         : "FROM_UNIXTIME(1361491200), ";
-      query+=item.get_sell_timestamp() > 0 ?
-        "FROM_UNIXTIME("+std::to_string(item.get_sell_timestamp())+"));"
-        : "FROM_UNIXTIME(1361491200));";
-      last_query = query;
-      sess->sql(query).execute();
-      sess->sql("COMMIT;").execute();
-      transaction = false;
+      series_query+=item.get_sell_timestamp() > 0 ?
+        "FROM_UNIXTIME("+std::to_string(item.get_sell_timestamp())+"))"
+        : "FROM_UNIXTIME(1361491200))";
+      first = false;
     }
+    
+    buy_query+=";";
+    last_query = buy_query;
+    sess->sql(buy_query).execute();
+    sell_query+=";";
+    last_query = sell_query;
+    sess->sql(sell_query).execute();
+    series_query+=";";
+    last_query = series_query;
+    sess->sql(series_query).execute();
+    sess->sql("COMMIT;").execute();
+    transaction = false;
   } catch (std::exception& e) {
     std::cerr << "Error writing prices: " << e.what() << std::endl;
     std::cout << "Last query: " << last_query << std::endl;
@@ -367,10 +383,12 @@ void db_connection::writeItemSources(
     sess->sql("START TRANSACTION;");
     last_query = "START TRANSACTION;";
     transaction = true;
+    bool first = true;
+    std::string query = R"(REPLACE INTO osrs_market.item_source (item_ID, source_ID, source, noted, skill, quantity_min, quantity_max, chance_min, chance_max, rolls) VALUES)";
     for (auto&& [ID, sources] : all_sources) {
       for (size_t i = 0; i < sources.size(); i++) {
         auto&& source = sources.begin()+i;
-        std::string query = R"(REPLACE INTO osrs_market.item_source (item_ID, source_ID, source, noted, skill, quantity_min, quantity_max, chance_min, chance_max, rolls) VALUES()";
+        query+= first ? "\n(" : ",\n(";
         query+=std::to_string(ID) + ",";
         query+=std::to_string(i) + ",";
         query+="\""+source->getSource()+"\",";
@@ -384,12 +402,13 @@ void db_connection::writeItemSources(
           std::to_string(source->getChanceMin())+"," : "NULL,";
         query+=source->getChanceMax() >= 0.0f ?
           std::to_string(source->getChanceMax()) + "," : "NULL,";
-        query+=std::to_string(source->getRolls()) + ");";
-
-        last_query = query;
-        sess->sql(query).execute();
+        query+=std::to_string(source->getRolls()) + ")";
       }
     }
+
+    query+=";";
+    last_query = query;
+    sess->sql(query).execute();
 
     sess->sql("COMMIT;").execute();
     transaction = false;
@@ -415,10 +434,12 @@ void db_connection::writeItemSource(
       sleep(1);
     sess->sql("START TRANSACTION;");
     last_query = "START TRANSACTION;";
+    std::string query = R"(REPLACE INTO osrs_market.item_source (item_ID, source_ID, source, noted, skill, quantity_min, quantity_max, chance_min, chance_max, rolls) VALUES)";
     transaction = true;
+    bool first = true;
     for (size_t i = 0; i < sources.size(); i++) {
       auto&& source = sources.begin()+i;
-      std::string query = R"(REPLACE INTO osrs_market.item_source (item_ID, source_ID, source, noted, skill, quantity_min, quantity_max, chance_min, chance_max, rolls) VALUES()";
+      query+= first ? "\n(" : ",\n(";
       query+=std::to_string(source->getID()) + ",";
       query+=std::to_string(i) + ",";
       query+="\""+source->getSource()+"\",";
@@ -439,11 +460,12 @@ void db_connection::writeItemSource(
         std::setprecision(19) << source->getChanceMax();
       query+=source->getChanceMax() >= 0.0f ?
         chance_stream.str() + "," : "NULL,";
-      query+=std::to_string(source->getRolls()) + ");";
-
-      last_query = query;
-      sess->sql(query).execute();
+      query+=std::to_string(source->getRolls()) + ")";
     }
+    query+=";";
+
+    last_query = query;
+    sess->sql(query).execute();
 
     sess->sql("COMMIT;").execute();
     transaction = false;
