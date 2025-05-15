@@ -389,6 +389,7 @@ void db_connection::writeItemSources(
       for (size_t i = 0; i < sources.size(); i++) {
         auto&& source = sources.begin()+i;
         query+= first ? "\n(" : ",\n(";
+        first = false;
         query+=std::to_string(ID) + ",";
         query+=std::to_string(i) + ",";
         query+="\""+source->getSource()+"\",";
