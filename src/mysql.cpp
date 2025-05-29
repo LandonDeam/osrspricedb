@@ -134,21 +134,10 @@ void db_connection::connect_tables() {
   std::cout << "Item source table connected." << std::endl;
 
   try {
-    std::string view_check_query =
-      "SELECT COUNT(*) FROM INFORMATION_SCHEMA.VIEWS "
-      R"(WHERE TABLE_SCHEMA = 'osrs_market' AND TABLE_NAME = 'item_summary_view';)";
-
-    auto res = sess->sql(view_check_query).execute();
-    auto row = res.fetchOne();
-
-    if (row[0].get<int>() == 0) {
-      std::cout << "Summary view does not exist. Creating..." << std::endl;
-      build_summary_view();
-    } else {
-      std::cout << "Summary view already exists." << std::endl;
-    }
+    std::cout << "Creating/Replacing Summary View..." << std::endl;
+    build_summary_view();
   } catch (const std::exception& e) {
-    std::cerr << "Error checking/creating summary view: "
+    std::cerr << "Error creating summary view: "
       << e.what() << std::endl;
   }
 }
@@ -348,7 +337,7 @@ void db_connection::writePrices(const std::unordered_map<int,
         : "FROM_UNIXTIME(1361491200))";
       first = false;
     }
-    
+
     buy_query+=";";
     last_query = buy_query;
     sess->sql(buy_query).execute();

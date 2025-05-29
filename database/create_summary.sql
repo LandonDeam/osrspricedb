@@ -13,7 +13,14 @@ SELECT
 
   bu.price AS buy_price,
   su.price AS sell_price,
-  (bu.price - su.price) AS profit,
+  GREATEST(bu.price, su.price) AS high_price,
+  LEAST(bu.price, su.price) AS low_price,
+  (high_price - low_price) AS margin,
+  LEAST(high_price * 2 / 100, 5000000) AS tax,
+  (margin - tax) AS profit,
+  (CAST(profit AS DECIMAL(10,2)) / high_price) AS roi,
+
+
 
   UNIX_TIMESTAMP(GREATEST(bu.updated, su.updated)) * 1000 AS last_update,
 
