@@ -13,12 +13,19 @@ SELECT
 
   bu.price AS buy_price,
   su.price AS sell_price,
-  GREATEST(bu.price, su.price) AS high_price,
-  LEAST(bu.price, su.price) AS low_price,
-  (high_price - low_price) AS margin,
-  LEAST(high_price * 2 / 100, 5000000) AS tax,
-  (margin - tax) AS profit,
-  (CAST(profit AS DECIMAL(10,2)) / high_price) AS roi,
+
+  ( GREATEST(bu.price, su.price) -
+    LEAST(bu.price, su.price) -
+    LEAST(
+      GREATEST(bu.price, su.price) * 2 / 100,
+      5000000)) AS profit,
+
+  ( CAST((GREATEST(bu.price, su.price) -
+          LEAST(bu.price, su.price) -
+          LEAST(
+            GREATEST(bu.price, su.price) * 2 / 100,
+            5000000)) AS DECIMAL(10,2))
+    / GREATEST(bu.price, su.price)) AS roi,
 
 
 
