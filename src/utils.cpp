@@ -176,10 +176,10 @@ const std::pair<std::unordered_map<int, price_update>, uint64_t>
 
     items.insert_or_assign(ID, price_update(
       ID,
-      low.IsInt() ? low.GetInt() : -1,
       high.IsInt() ? high.GetInt() : -1,
-      lowTime.IsInt64() ? lowTime.GetInt64() : 0,
-      highTime.IsInt64() ? highTime.GetInt64() : 0));
+      low.IsInt() ? low.GetInt() : -1,
+      highTime.IsInt64() ? highTime.GetInt64() : 0,
+      lowTime.IsInt64() ? lowTime.GetInt64() : 0));
   }
 
   return std::make_pair(items, timestamp);

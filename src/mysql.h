@@ -10,6 +10,9 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include "item_map.h"
+#include "item_source.h"
+#include "price_update.h"
 
 class db_connection {
  private:
@@ -58,8 +61,8 @@ class db_connection {
   static void writeItemSource(
     const std::vector<class item_source>& sources);
 
-  static void writeItemVolumes(
-    const std::vector<class item_volume>& sources, uint64_t timestamp);
+  // static void writeItemVolumes(
+  //   const std::vector<class item_volume>& sources, uint64_t timestamp);
 };
 
 #endif  // MYSQL_H_

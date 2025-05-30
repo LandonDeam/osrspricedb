@@ -467,7 +467,7 @@ void db_connection::writeItemSource(
   }
 }
 
-void db_connection::writeItemVolumes(
-  const std::vector<class item_volume>& sources, uint64_t timestamp) {
-  
-}
+// void db_connection::writeItemVolumes(
+//   const std::vector<class item_volume>& sources, uint64_t timestamp) {
+
+// }
