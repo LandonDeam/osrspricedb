@@ -417,7 +417,7 @@ void db_connection::writeItemSources(
 */
 void db_connection::writeItemSource(
   const std::vector<class item_source>& sources) {
-  std::cout << "Writing sources... " << std::endl;
+  std::cout << "Writing source... " << std::endl;
   std::string last_query;
   try {
     while (transaction)
@@ -465,4 +465,9 @@ void db_connection::writeItemSource(
     sess->sql("ROLLBACK;").execute();
     transaction = false;
   }
+}
+
+void db_connection::writeItemVolumes(
+  const std::vector<class item_volume>& sources, uint64_t timestamp) {
+  
 }

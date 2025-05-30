@@ -16,16 +16,16 @@ SELECT
 
   ( GREATEST(bu.price, su.price) -
     LEAST(bu.price, su.price) -
-    LEAST(
+    FLOOR(LEAST(
       GREATEST(bu.price, su.price) * 2 / 100,
-      5000000)) AS profit,
+      5000000))) AS profit,
 
   ( CAST((GREATEST(bu.price, su.price) -
           LEAST(bu.price, su.price) -
-          LEAST(
+          FLOOR(LEAST(
             GREATEST(bu.price, su.price) * 2 / 100,
-            5000000)) AS DECIMAL(10,2))
-    / GREATEST(bu.price, su.price)) AS roi,
+            5000000))) AS DECIMAL(10,2))
+    / LEAST(bu.price, su.price) * 100) AS roi,
 
 
 

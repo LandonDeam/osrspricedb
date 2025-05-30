@@ -10,9 +10,6 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
-#include "price_update.h"
-#include "item_map.h"
-#include "item_source.h"
 
 class db_connection {
  private:
@@ -29,6 +26,7 @@ class db_connection {
   inline static std::shared_ptr<mysqlx::Table> price_update;
   inline static std::shared_ptr<mysqlx::Table> item_map;
   inline static std::shared_ptr<mysqlx::Table> item_source;
+  inline static std::shared_ptr<mysqlx::Table> item_volume;
 
   static void connect_tables();
   static void build_schema();
@@ -36,6 +34,7 @@ class db_connection {
   static void build_price_update();
   static void build_item_map();
   static void build_item_source();
+  static void build_item_volume();
   static void build_summary_view();
 
   static void build_table(const std::string& table_name,
@@ -58,6 +57,9 @@ class db_connection {
 
   static void writeItemSource(
     const std::vector<class item_source>& sources);
+
+  static void writeItemVolumes(
+    const std::vector<class item_volume>& sources, uint64_t timestamp);
 };
 
 #endif  // MYSQL_H_

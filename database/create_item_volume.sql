@@ -1,0 +1,12 @@
+R""(
+CREATE TABLE IF NOT EXISTS osrs_market.item_volume (
+ID MEDIUMINT NOT NULL,
+updated TIMESTAMP(0) NOT NULL,
+sell_volume INT NOT NULL,
+buy_volume INT NOT NULL,
+
+FOREIGN KEY (ID) REFERENCES osrs_market.item_map(ID) ON UPDATE CASCADE ON DELETE CASCADE,
+
+PRIMARY KEY (updated, ID)
+);
+)""
