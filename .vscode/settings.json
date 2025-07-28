@@ -1,8 +1,15 @@
 {
     "cSpell.words": [
+        "Gorak",
         "highalch",
+        "incrdt",
         "lowalch",
-        "osrs"
+        "osrs",
+        "pugi",
+        "qmax",
+        "qmin",
+        "Veryrare",
+        "wikitext"
     ],
     "files.associations": {
         "*.embeddedhtml": "html",
