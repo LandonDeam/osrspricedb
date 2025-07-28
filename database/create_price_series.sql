@@ -7,6 +7,6 @@ sell_updated TIMESTAMP(0) NOT NULL REFERENCES osrs_market.price_update(updated),
 
 FOREIGN KEY (ID) REFERENCES osrs_market.item_map(ID) ON UPDATE CASCADE ON DELETE CASCADE,
 
-PRIMARY KEY (fetched, ID)
+PRIMARY KEY (ID, fetched)
 );
 )""

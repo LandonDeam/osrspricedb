@@ -200,3 +200,15 @@ void getter::manage_prices(getter* g) {
     sleep(60);  // 1 minute
   }
 }
+
+/**
+* @brief Manages gathering price data at a 5 minute interval
+* @param g pointer to a `getter` object that is set up to pull data
+*/
+void getter::manage_volume(getter* g) {
+  while (true) {
+    // g->get_volume();
+    std::cout << "Successfully wrote volume." << spaces_40 << std::endl;
+    sleep(60 * 5);  // 5 minutes
+  }
+}

@@ -28,6 +28,8 @@ class getter {
 
   static void manage_sources(getter* g);
 
+  static void manage_volume(getter* g);
+
  private:
   void get(const std::string& ep,
            const std::string& debug,
